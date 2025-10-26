@@ -46,3 +46,8 @@ local/
 vim/.vim/plugged/
 vim/.vim/bundle/
 nvim/lazy-lock.json.backup*
+
+
+.zcompdump*
+.zcompcache/
+.zsh_mode
