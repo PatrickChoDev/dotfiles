@@ -1,0 +1,73 @@
+return {
+  'stevearc/resession.nvim',
+  lazy = false,
+  dependencies = { 'nvim-telescope/telescope.nvim' },
+  opts = {
+    autosave = {
+      enable = true,
+      interval = 60,
+      notify = true,
+    },
+  },
+  config = function(_, opts)
+    local resession = require 'resession'
+    resession.setup(opts)
+    vim.api.nvim_create_autocmd('VimEnter', {
+      callback = function()
+      -- Load session if nvim was started with a directory argument and without reading from stdin
+      if vim.fn.argc(-1) == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1 and not vim.g.using_stdin then
+        -- Change to the directory argument first, then load session for that directory
+        local dir_arg = vim.fn.argv(0)
+        vim.cmd('cd ' .. vim.fn.fnameescape(dir_arg))
+        -- Save these to a different directory, so our manual sessions don't get polluted
+        resession.load(vim.fn.getcwd(), { dir = 'dirsession', silence_errors = true })
+      elseif vim.fn.argc(-1) == 0 and not vim.g.using_stdin then
+        -- Load dashboard for nvim with no arguments
+        -- Dashboard will be loaded by default when no session is loaded
+      end
+      end,
+      nested = true,
+    })
+    vim.api.nvim_create_autocmd('VimLeavePre', {
+      callback = function()
+        resession.save(vim.fn.getcwd(), { dir = 'dirsession', notify = true })
+      end,
+    })
+    vim.api.nvim_create_autocmd('StdinReadPre', {
+      callback = function()
+        -- Store this for later
+        vim.g.using_stdin = true
+      end,
+    })
+  end,
+  keys = {
+    {
+      '<leader>sp',
+      function()
+        require('telescope').extensions.resession.resession()
+      end,
+      desc = 'Search sessions',
+    },
+    {
+      '<leader>ps',
+      function()
+        require('resession').save(vim.fn.getcwd(), { notify = true })
+      end,
+      desc = 'Save session',
+    },
+    {
+      '<leader>pr',
+      function()
+        require('resession').load(vim.fn.getcwd())
+      end,
+      desc = 'Restore session',
+    },
+    {
+      '<leader>pd',
+      function()
+        require('resession').delete(vim.fn.getcwd())
+      end,
+      desc = 'Delete session',
+    },
+  },
+}

@@ -28,11 +28,10 @@ require('lazy').setup {
   require 'plugins.indent-blankline',
   require 'plugins.misc',
   require 'plugins.comment',
-  require 'plugins.auto-session',
+  require 'plugins.resession',
   require 'plugins.bufferline',
   require 'plugins.noice',
   require 'plugins.multi-cursor',
-  require 'plugins.image',
 }
 
 -- The line beneath this is called `modeline`. See `:help modeline`

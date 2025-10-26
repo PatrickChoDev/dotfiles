@@ -30,7 +30,7 @@ return {
     require('neo-tree').setup {
       close_if_last_window = false, -- Close Neo-tree if it is the last window left in the tab
       auto_clean_after_session_restore = true,
-      popup_border_style = 'rounded',
+      popup_border_style = 'single',
       enable_git_status = true,
       enable_diagnostics = true,
       -- enable_normal_mode_for_inputs = false,                             -- Enable normal mode for input dialogs.
@@ -155,7 +155,7 @@ return {
             -- this command supports BASH style brace expansion ("x{a,b,c}" -> xa,xb,xc). see `:h neo-tree-file-actions` for details
             -- some commands may take optional config options, see `:h neo-tree-mappings` for details
             config = {
-              show_path = 'relative', -- "none", "relative", "absolute"
+              show_path = 'none', -- "none", "relative", "absolute"
             },
           },
           ['A'] = 'add_directory', -- also accepts the optional config.show_path option like "add". this also supports BASH style brace expansion.

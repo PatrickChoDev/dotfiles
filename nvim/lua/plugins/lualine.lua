@@ -55,7 +55,12 @@ return {
         lualine_c = { filename },
         lualine_x = {
           function()
-            return require('auto-session.lib').current_session_name(true)
+            local resession = require('resession')
+            local current = resession.get_current()
+            if current then
+              return '󰆔 ' .. current
+            end
+            return ''
           end,
           diagnostics,
           diff,

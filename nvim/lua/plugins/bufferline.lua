@@ -10,7 +10,7 @@ return {
       options = {
         mode = 'buffers', -- set to "tabs" to only show tabpages instead
         themable = true, -- allows highlight groups to be overriden i.e. sets highlights as default
-        numbers = 'ordinal', -- | "ordinal" | "buffer_id" | "both" | function({ ordinal, id, lower, raise }): string,
+        numbers = 'none', -- | "ordinal" | "buffer_id" | "both" | function({ ordinal, id, lower, raise }): string,
         close_command = 'Bdelete! %d', -- can be a string | function, see "Mouse actions"
         right_mouse_command = 'Bdelete! %d',
         left_mouse_command = 'buffer %d',
@@ -73,15 +73,9 @@ return {
         },
       },
       highlights = {
-        separator = {
-          fg = '#434C5E',
-        },
         buffer_selected = {
           bold = true,
           italic = false,
-        },
-        background = {
-          fg = '#737F8C',
         },
         -- separator_selected = {},
         -- tab_selected = {},
