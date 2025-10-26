@@ -8,8 +8,11 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Source common functions
 source "$DOTFILES_DIR/lib/common.sh"
 
+# Export backup timestamp for all child scripts to use
+export BACKUP_TIMESTAMP
+
 # List of available programs
-PROGRAMS=("vim" "nvim" "ghostty")
+PROGRAMS=("vim" "nvim" "ghostty" "zsh")
 
 # Extract description from install script header
 get_program_description() {
@@ -56,6 +59,10 @@ check_install_status() {
         ghostty)
             local targets=("$HOME/.config/ghostty/config" "$HOME/.config/ghostty/themes")
             local sources=("$program_dir/config" "$program_dir/themes")
+            ;;
+        zsh)
+            local targets=("$HOME/.zshrc" "$HOME/.zshenv" "$HOME/.zprofile" "$HOME/.zsh")
+            local sources=("$program_dir/.zshrc" "$program_dir/.zshenv" "$program_dir/.zprofile" "$program_dir/.zsh")
             ;;
         *)
             echo "unknown"

@@ -10,6 +10,11 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Backup timestamp - shared across all backups in this session
+if [ -z "$BACKUP_TIMESTAMP" ]; then
+    BACKUP_TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+fi
+
 # Print colored output functions
 print_info() {
     echo -e "${BLUE}[INFO]${NC} $1"
@@ -57,7 +62,7 @@ handle_conflict() {
         print_warning "Conflict detected: $target already exists"
 
         if ask_confirmation "Do you want to backup and replace it?"; then
-            local backup="${target}.backup.$(date +%Y%m%d_%H%M%S)"
+            local backup="${target}.backup.${BACKUP_TIMESTAMP}"
             mv "$target" "$backup"
             print_success "Backed up to: $backup"
             return 0

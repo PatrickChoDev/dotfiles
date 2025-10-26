@@ -1,0 +1,2 @@
+alias nerdctl=nerdctl.lima
+

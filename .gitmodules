@@ -4,3 +4,18 @@
 [submodule "vim/ext/catppuccin"]
 	path = vim/ext/catppuccin
 	url = https://github.com/catppuccin/vim.git
+[submodule "zsh/.zsh/plugins/fast-syntax-highlighting"]
+	path = zsh/.zsh/plugins/fast-syntax-highlighting
+	url = https://github.com/zdharma-continuum/fast-syntax-highlighting
+[submodule "zsh/.zsh/plugins/fzf-tab"]
+	path = zsh/.zsh/plugins/fzf-tab
+	url = https://github.com/Aloxaf/fzf-tab
+[submodule "zsh/.zsh/plugins/zsh-autosuggestions"]
+	path = zsh/.zsh/plugins/zsh-autosuggestions
+	url = https://github.com/zsh-users/zsh-autosuggestions
+[submodule "zsh/.zsh/plugins/zsh-completions"]
+	path = zsh/.zsh/plugins/zsh-completions
+	url = https://github.com/zsh-users/zsh-completions
+[submodule "zsh/.zsh/plugins/zsh-history-substring-search"]
+	path = zsh/.zsh/plugins/zsh-history-substring-search
+	url = https://github.com/zsh-users/zsh-history-substring-search

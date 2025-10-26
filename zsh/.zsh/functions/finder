@@ -1,0 +1,4 @@
+finder() {
+  local target="${1:-.}"
+  open -a Finder "$target"
+}

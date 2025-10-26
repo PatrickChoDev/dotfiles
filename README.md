@@ -30,7 +30,9 @@ The install script will:
 2. **Automatically** initialize git submodules (plugins in `ext/` directories) if not already cloned
 3. Detect any existing files/directories that would conflict
 4. Ask for confirmation before backing up and replacing conflicting files
-5. Create backup files with timestamps (e.g., `.vimrc.backup.20240115_143022`)
+5. Create backup files with a **shared timestamp** for the entire session (e.g., `.vimrc.backup.20240115_143022`, `.vimrc.backup.20240115_143022`)
+   - All backups from a single installation run use the same timestamp
+   - Makes it easy to identify and restore a complete set of configs
 
 ### Checking Status
 
@@ -51,6 +53,8 @@ If a file already exists at the target location, the script will:
 - Check if it's already a symlink pointing to the dotfiles (skip if yes)
 - Prompt you to backup and replace the existing file
 - Create a timestamped backup if you choose to replace
+  - **All backups in one session share the same timestamp**
+  - Example: Installing vim might create `.vimrc.backup.20240115_143022` and `.vim.backup.20240115_143022`
 - Skip the file if you choose not to replace
 
 ## Structure
@@ -158,7 +162,7 @@ mv ~/.vimrc.backup.20240115_143022 ~/.vimrc
 
 - ✅ Status checking with `--list` command
 - ✅ Conflict detection and resolution
-- ✅ Automatic timestamped backups
+- ✅ Automatic timestamped backups (shared timestamp per session)
 - ✅ Individual or bulk installation
 - ✅ Colored output for better readability
 - ✅ Standalone program installers (can run independently)
