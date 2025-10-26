@@ -1,1 +1,0 @@
-/Users/patrick/dotfiles/zsh/.zsh

@@ -91,7 +91,7 @@ create_symlink() {
         print_info "Created directory: $target_dir"
     fi
 
-    ln -sf "$source" "$target"
+    ln -sfn "$source" "$target"
     print_success "Linked: $target -> $source"
     return 0
 }
