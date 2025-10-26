@@ -1,0 +1,48 @@
+# Backup files created by install script
+*.backup.*
+
+# OS-specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor-specific files
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Vim
+.netrwhist
+*.un~
+
+# Nvim
+nvim/plugin/
+
+# Local customizations (optional)
+local/
+*.local
+
+# Compiled files
+*.pyc
+*.class
+*.o
+*.so
+
+# Package manager files (if you manage plugins here)
+vim/.vim/plugged/
+vim/.vim/bundle/
+nvim/lazy-lock.json.backup*

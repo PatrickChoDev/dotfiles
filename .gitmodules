@@ -1,0 +1,6 @@
+[submodule "ghostty/ext/catppuccin"]
+	path = ghostty/ext/catppuccin
+	url = https://github.com/catppuccin/ghostty.git
+[submodule "vim/ext/catppuccin"]
+	path = vim/ext/catppuccin
+	url = https://github.com/catppuccin/vim.git
