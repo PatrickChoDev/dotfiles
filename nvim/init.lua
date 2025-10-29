@@ -29,7 +29,6 @@ require('lazy').setup {
   require 'plugins.misc',
   require 'plugins.comment',
   require 'plugins.resession',
-  require 'plugins.bufferline',
   require 'plugins.noice',
   require 'plugins.multi-cursor',
 }
