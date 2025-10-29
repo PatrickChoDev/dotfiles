@@ -21,9 +21,6 @@ function M.setup()
   vim.keymap.set('n', '<leader>tm', tab_utils.move_tab_to_window, { noremap = true, silent = true, desc = '[T]ab [M]ove to window' })
   vim.keymap.set('n', '<leader>tM', tab_utils.move_tab_to_tab_number, { noremap = true, silent = true, desc = '[T]ab [M]ove to tab number' })
   vim.keymap.set('n', '<leader>tT', '<C-w>T', { noremap = true, silent = true, desc = '[T]ab break window to new [T]ab' })
-
-  -- Legacy keymaps for backward compatibility
-  vim.keymap.set('n', '<leader>to', ':tabnew<CR>', opts)
 end
 
 return M

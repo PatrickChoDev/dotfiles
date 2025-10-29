@@ -7,13 +7,14 @@ function M.setup()
   local window_utils = require 'core.utils.window'
 
   -- Window splits
+  vim.keymap.set('n', '<leader>v', '<C-w>v', opts) -- split window vertically
   vim.keymap.set('n', '<leader>wv', '<C-w>v', { noremap = true, silent = true, desc = '[W]indow split [V]ertical' })
+  vim.keymap.set('n', '<leader>h', '<C-w>s', opts) -- split window horizontally
   vim.keymap.set('n', '<leader>wh', '<C-w>s', { noremap = true, silent = true, desc = '[W]indow split [H]orizontal' })
   vim.keymap.set('n', '<leader>ws', '<C-w>s', { noremap = true, silent = true, desc = '[W]indow [S]plit horizontal' })
 
   -- Window management
   vim.keymap.set('n', '<leader>wc', window_utils.smart_close_window, { noremap = true, silent = true, desc = '[W]indow [C]lose' })
-  vim.keymap.set('n', '<leader>wx', window_utils.smart_close_window, { noremap = true, silent = true, desc = '[W]indow [X] (close)' })
   vim.keymap.set('n', '<leader>we', window_utils.equalize_windows, { noremap = true, silent = true, desc = '[W]indow [E]qualize' })
   vim.keymap.set('n', '<leader>w=', window_utils.equalize_windows, { noremap = true, silent = true, desc = '[W]indow = (equalize)' })
 
@@ -35,12 +36,6 @@ function M.setup()
   vim.keymap.set('n', '<C-j>', ':wincmd j<CR>', opts)
   vim.keymap.set('n', '<C-h>', ':wincmd h<CR>', opts)
   vim.keymap.set('n', '<C-l>', ':wincmd l<CR>', opts)
-
-  -- Legacy keymaps for backward compatibility
-  vim.keymap.set('n', '<leader>v', '<C-w>v', opts) -- split window vertically
-  vim.keymap.set('n', '<leader>h', '<C-w>s', opts) -- split window horizontally
-  vim.keymap.set('n', '<leader>se', window_utils.equalize_windows, { noremap = true, silent = true, desc = 'Make split windows equal' })
-  vim.keymap.set('n', '<leader>xs', window_utils.smart_close_window, { noremap = true, silent = true, desc = 'Close window' })
 
   -- Terminal mode
   vim.keymap.set('t', '<C-\\>', '<C-\\><C-n>', opts)

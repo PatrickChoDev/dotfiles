@@ -22,7 +22,7 @@ require('lazy').setup {
   require 'plugins.telescope',
   require 'plugins.lsp',
   require 'plugins.autocompletion',
-  require 'plugins.none-ls',
+  require 'plugins.debugger',
   require 'plugins.gitsigns',
   require 'plugins.alpha',
   require 'plugins.indent-blankline',
@@ -31,6 +31,9 @@ require('lazy').setup {
   require 'plugins.resession',
   require 'plugins.noice',
   require 'plugins.multi-cursor',
+
+  require 'plugins.conform',
+  require 'plugins.nvim-lint',
 }
 
 -- The line beneath this is called `modeline`. See `:help modeline`

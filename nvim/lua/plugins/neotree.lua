@@ -33,21 +33,8 @@ return {
       popup_border_style = 'single',
       enable_git_status = true,
       enable_diagnostics = true,
-      -- enable_normal_mode_for_inputs = false,                             -- Enable normal mode for input dialogs.
-      open_files_do_not_replace_types = { 'terminal', 'trouble', 'qf' }, -- when opening files, do not use windows containing these filetypes or buftypes
-      sort_case_insensitive = false, -- used when sorting files and directories in the tree
-      sort_function = nil, -- use a custom function for sorting files and directories in the tree
-      -- sort_function = function (a,b)
-      --       if a.type == b.type then
-      --           return a.path > b.path
-      --       else
-      --           return a.type > b.type
-      --       end
-      --   end , -- this sorts files and directories descendantly
+      enable_cursor_hijack = true,
       default_component_configs = {
-        container = {
-          enable_character_fade = true,
-        },
         indent = {
           indent_size = 2,
           padding = 1, -- extra padding on left hand side
@@ -66,8 +53,6 @@ return {
           folder_closed = '',
           folder_open = '',
           folder_empty = '󰜌',
-          -- The next two settings are only a fallback, if you use nvim-web-devicons and configure default icons there
-          -- then these will never be used.
           default = '*',
           highlight = 'NeoTreeFileIcon',
         },
@@ -83,13 +68,13 @@ return {
         git_status = {
           symbols = {
             -- Change type
-            added = '', -- or "✚", but this is redundant info if you use git_status_colors on the name
-            modified = '', -- or "", but this is redundant info if you use git_status_colors on the name
+            added = '✚', -- or "✚", but this is redundant info if you use git_status_colors on the name
+            modified = '', -- or "", but this is redundant info if you use git_status_colors on the name
             deleted = '✖', -- this can only be used in the git_status source
             renamed = '󰁕', -- this can only be used in the git_status source
             -- Status type
             untracked = '',
-            ignored = '',
+            ignored = '', -- this can only be used in the git_status source 
             unstaged = '󰄱',
             staged = '',
             conflict = '',
@@ -116,10 +101,6 @@ return {
           enabled = false,
         },
       },
-      -- A list of functions, each representing a global custom command
-      -- that will be available in all sources (if not overridden in `opts[source_name].commands`)
-      -- see `:h neo-tree-custom-commands-global`
-      commands = {},
       window = {
         position = 'left',
         width = 40,
@@ -180,7 +161,6 @@ return {
           ['i'] = 'show_file_details',
         },
       },
-      nesting_rules = {},
       filesystem = {
         filtered_items = {
           visible = false, -- when true, they will just be displayed differently than normal items
@@ -214,9 +194,9 @@ return {
           },
         },
         follow_current_file = {
-          enabled = false, -- This will find and focus the file in the active buffer every time
+          enabled = true, -- This will find and focus the file in the active buffer every time
           --               -- the current file is changed while the tree is open.
-          leave_dirs_open = false, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
+          leave_dirs_open = true, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
         },
         group_empty_dirs = false, -- when true, empty folders will be grouped together
         hijack_netrw_behavior = 'open_default', -- netrw disabled, opening a directory opens neo-tree
@@ -262,7 +242,7 @@ return {
         follow_current_file = {
           enabled = true, -- This will find and focus the file in the active buffer every time
           --              -- the current file is changed while the tree is open.
-          leave_dirs_open = false, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
+          leave_dirs_open = true, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
         },
         group_empty_dirs = true, -- when true, empty folders will be grouped together
         show_unloaded = true,
@@ -328,6 +308,15 @@ return {
     -- Trigger resize only when windows are closed to respect manual resizing
     vim.api.nvim_create_autocmd('WinEnter', {
       callback = resize_neotree,
+    })
+
+    vim.api.nvim_create_autocmd('FileType', {
+      pattern = 'neo-tree',
+      callback = function()
+        vim.wo.wrap = true
+        vim.wo.linebreak = true
+        vim.wo.showbreak = '↪ '
+      end,
     })
 
     -- Explorer keymaps (organized under <leader>e)
