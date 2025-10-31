@@ -22,14 +22,10 @@ return {
 
     local buffers = {
       'buffers',
+      colored = true,
       symbols = { modified = '● ', alternate_file = '#' },
       mode = 2,
-      max_length = vim.o.columns * 2 / 3,
       filetype_names = filetype_names,
-      buffers_color = {
-        active = 'LualineBufferActive',
-        inactive = 'LualineBufferInactive',
-      },
     }
 
     local filename = {
@@ -55,7 +51,7 @@ return {
 
     local diff = {
       'diff',
-      colored = false,
+      colored = true,
       symbols = { added = ' ', modified = ' ', removed = ' ' }, -- changes diff symbols
       cond = hide_in_width,
     }
@@ -63,7 +59,7 @@ return {
     local windows = {
       'windows',
       show_filename_only = true,
-      mode = 2,
+      mode = 1,
       max_length = vim.o.columns / 3,
       filetype_names = filetype_names,
     }
@@ -100,14 +96,14 @@ return {
         lualine_x = {
           { 'filetype', cond = hide_in_width },
         },
-        lualine_y = { 'location', 'progress' },
-        lualine_z = { 'lsp_status', session },
+        lualine_y = { session},
+        lualine_z = { 'lsp_status' },
       },
       inactive_sections = {
         lualine_a = {},
         lualine_b = {},
         lualine_c = {},
-        lualine_x = { { 'location', padding = 0 } },
+        lualine_x = { },
         lualine_y = {},
         lualine_z = {},
       },
@@ -133,7 +129,7 @@ return {
         lualine_c = {},
         lualine_x = { diff },
         lualine_y = { diagnostics },
-        lualine_z = { { 'location', padding = 0, 'progress' } },
+        lualine_z = { { 'location', padding = 0}, 'progress' } ,
       },
       inactive_winbar = {
         lualine_a = {},

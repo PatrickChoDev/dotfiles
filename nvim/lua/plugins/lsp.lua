@@ -8,35 +8,32 @@ return {
     'saghen/blink.cmp',
   },
   config = function()
-    local sign = function(opts)
-      vim.diagnostic.config {
-        signs = {
-          -- Enable signs and assign a table of diagnostic types to symbols
-          active = true,
-          values = {
-            { name = opts.name, text = opts.text, texthl = opts.name },
-          },
-        },
-        virtual_text = true, -- or false if you don’t want inline text
-        underline = true, -- or false
-        severity_sort = true, -- optional
-      }
-    end
-
-    sign { name = 'DiagnosticSignError', text = '' }
-    sign { name = 'DiagnosticSignWarn', text = '' }
-    sign { name = 'DiagnosticSignHint', text = '' }
-    sign { name = 'DiagnosticSignInfo', text = '' }
-
     vim.diagnostic.config {
+      signs = {
+        text = {
+          [vim.diagnostic.severity.ERROR] = '',
+          [vim.diagnostic.severity.WARN] = '',
+          [vim.diagnostic.severity.HINT] = '',
+          [vim.diagnostic.severity.INFO] = '',
+        },
+        numhl = {
+          [vim.diagnostic.severity.ERROR] = 'DiagnosticSignError',
+          [vim.diagnostic.severity.WARN] = 'DiagnosticSignWarn',
+          [vim.diagnostic.severity.HINT] = 'DiagnosticSignHint',
+          [vim.diagnostic.severity.INFO] = 'DiagnosticSignInfo',
+        },
+        linehl = {
+          [vim.diagnostic.severity.ERROR] = 'ErrorMsg',
+        },
+      },
+
       virtual_text = true,
-      signs = true,
-      update_in_insert = true,
       underline = true,
       severity_sort = true,
+      update_in_insert = true,
       float = {
         border = 'single',
-        source = 'always',
+        source = true,
         header = '',
         prefix = '',
       },
@@ -72,7 +69,7 @@ return {
         -- When you move your cursor, the highlights will be cleared (the second autocommand).
         local client = vim.lsp.get_client_by_id(event.data.client_id)
         if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
-          local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
+          local highlight_augroup = vim.api.nvim_create_augroup('LspHighlight', { clear = false })
           vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
             buffer = event.buf,
             group = highlight_augroup,
@@ -86,10 +83,10 @@ return {
           })
 
           vim.api.nvim_create_autocmd('LspDetach', {
-            group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
+            group = vim.api.nvim_create_augroup('LspHighlightDetach', { clear = true }),
             callback = function(event2)
               vim.lsp.buf.clear_references()
-              vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
+              vim.api.nvim_clear_autocmds { group = 'LspHighlight', buffer = event2.buf }
             end,
           })
         end
@@ -100,10 +97,6 @@ return {
           map('<leader>Th', function()
             vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
           end, '[T]oggle inlay [H]ints')
-          -- Legacy keymap for backward compatibility
-          map('<leader>th', function()
-            vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
-          end, '[T]oggle Inlay [H]ints')
         end
       end,
     })

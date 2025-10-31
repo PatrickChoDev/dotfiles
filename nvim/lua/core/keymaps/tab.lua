@@ -1,7 +1,6 @@
 -- Tab-related keymaps
 
 local M = {}
-local opts = { noremap = true, silent = true }
 
 function M.setup()
   local tab_utils = require 'core.utils.tab'

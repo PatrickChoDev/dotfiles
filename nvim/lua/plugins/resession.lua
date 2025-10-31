@@ -25,7 +25,7 @@ return {
 
           -- Remove [No Name] buffer
           for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-            if vim.api.nvim_buf_get_name(buf) == '' and vim.api.nvim_buf_get_option(buf, 'buftype') == '' then
+            if vim.api.nvim_buf_get_name(buf) == '' and vim.api.nvim_get_option_value('buftype', { buf = buf }) then
               vim.api.nvim_buf_delete(buf, { force = true })
             end
           end

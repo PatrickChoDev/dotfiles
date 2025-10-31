@@ -31,7 +31,6 @@ require('lazy').setup {
   require 'plugins.resession',
   require 'plugins.noice',
   require 'plugins.multi-cursor',
-
   require 'plugins.conform',
   require 'plugins.nvim-lint',
 }

@@ -29,7 +29,7 @@ vim.o.backspace = 'indent,eol,start' -- Allow backspace on (default: 'indent,eol
 vim.o.pumheight = 10 -- Pop up menu height (default: 0)
 vim.o.conceallevel = 0 -- So that `` is visible in markdown files (default: 1)
 vim.o.laststatus = 3 -- Always display the status line (default: 2)
-vim.wo.signcolumn = 'yes' -- Keep signcolumn on by default (default: 'auto')
+vim.wo.signcolumn = 'auto:5' -- Keep signcolumn on by default (default: 'auto')
 vim.o.fileencoding = 'utf-8' -- The encoding written to a file (default: 'utf-8')
 vim.o.cmdheight = 1 -- More space in the Neovim command line for displaying messages (default: 1)
 vim.o.breakindent = true -- Enable break indent (default: false)
@@ -40,9 +40,7 @@ vim.o.writebackup = false -- If a file is being edited by another program (or wa
 vim.o.undofile = true -- Save undo history (default: false)
 vim.opt.completeopt = { 'menuone', 'noselect', 'noinsert' }
 vim.opt.shortmess:append 'c' -- Don't give |ins-completion-menu| messages (default: does not include 'c')
-vim.opt.iskeyword:append '-' -- Hyphenated words recognized by searches (default: does not include '-')
 vim.opt.formatoptions:remove { 'c', 'r', 'o' } -- Don't insert the current comment leader automatically for auto-wrapping comments using 'textwidth', hitting <Enter> in insert mode, or hitting 'o' or 'O' in normal mode. (default: 'croql')
 vim.opt.runtimepath:remove '/usr/share/vim/vimfiles' -- Separate Vim plugins from Neovim in case Vim still in use (default: includes this path if Vim is installed)
 vim.o.winborder = 'single' -- Set window borders to single line (default: 'none')
-vim.api.nvim_set_option('updatetime', 300)
 vim.opt.hidden = true

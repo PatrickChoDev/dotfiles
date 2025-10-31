@@ -53,6 +53,8 @@ return {
           folder_closed = '',
           folder_open = '',
           folder_empty = '󰜌',
+          folder_empty_open = '󰜌',
+          use_filtered_colors = true,
           default = '*',
           highlight = 'NeoTreeFileIcon',
         },
@@ -68,14 +70,14 @@ return {
         git_status = {
           symbols = {
             -- Change type
-            added = '✚', -- or "✚", but this is redundant info if you use git_status_colors on the name
-            modified = '', -- or "", but this is redundant info if you use git_status_colors on the name
+            added = '', -- or "✚", but this is redundant info if you use git_status_colors on the name
+            modified = '', -- or "", but this is redundant info if you use git_status_colors on the name
             deleted = '✖', -- this can only be used in the git_status source
             renamed = '󰁕', -- this can only be used in the git_status source
             -- Status type
-            untracked = '',
+            untracked = '',
             ignored = '', -- this can only be used in the git_status source 
-            unstaged = '󰄱',
+            unstaged = '',
             staged = '',
             conflict = '',
           },
