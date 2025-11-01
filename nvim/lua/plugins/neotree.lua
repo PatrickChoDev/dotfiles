@@ -28,7 +28,7 @@ return {
   },
   config = function()
     require('neo-tree').setup {
-      close_if_last_window = false, -- Close Neo-tree if it is the last window left in the tab
+      close_if_last_window = false,
       auto_clean_after_session_restore = true,
       popup_border_style = 'single',
       enable_git_status = true,
