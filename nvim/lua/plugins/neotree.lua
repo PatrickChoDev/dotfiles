@@ -1,6 +1,17 @@
 return {
   'nvim-neo-tree/neo-tree.nvim',
+  lazy = false,
   branch = 'v3.x',
+  cmd = 'Neotree',
+  keys = {
+    { '<leader>e', ':Neotree toggle position=left<CR>', desc = '[E]xplorer toggle' },
+    { '<leader>ee', ':Neotree toggle position=left<CR>', desc = '[E]xplorer [E] toggle' },
+    { '<leader>ef', ':Neotree reveal<CR>', desc = '[E]xplorer [F]ind current file' },
+    { '<leader>er', ':Neotree reveal<CR>', desc = '[E]xplorer [R]eveal current file' },
+    { '<leader>gs', ':Neotree float git_status<CR>', desc = '[G]it [S]tatus' },
+    { '\\', ':Neotree focus<CR>', desc = 'Focus Neotree' },
+    { '<leader>ngs', ':Neotree float git_status<CR>', desc = 'Neo-tree git status' },
+  },
   dependencies = {
     'nvim-lua/plenary.nvim',
     'nvim-tree/nvim-web-devicons',
@@ -321,17 +332,6 @@ return {
       end,
     })
 
-    -- Explorer keymaps (organized under <leader>e)
-    vim.keymap.set('n', '<leader>e', ':Neotree toggle position=left<CR>', { noremap = true, silent = true, desc = '[E]xplorer toggle' })
-    vim.keymap.set('n', '<leader>ee', ':Neotree toggle position=left<CR>', { noremap = true, silent = true, desc = '[E]xplorer [E] toggle' })
-    vim.keymap.set('n', '<leader>ef', ':Neotree reveal<CR>', { noremap = true, silent = true, desc = '[E]xplorer [F]ind current file' })
-    vim.keymap.set('n', '<leader>er', ':Neotree reveal<CR>', { noremap = true, silent = true, desc = '[E]xplorer [R]eveal current file' })
 
-    -- Git keymaps (organized under <leader>g)
-    vim.keymap.set('n', '<leader>gs', ':Neotree float git_status<CR>', { noremap = true, silent = true, desc = '[G]it [S]tatus' })
-
-    -- Legacy keymaps for backward compatibility
-    vim.keymap.set('n', '\\', ':Neotree focus<CR>', { noremap = true, silent = true, desc = 'Focus Neotree' })
-    vim.keymap.set('n', '<leader>ngs', ':Neotree float git_status<CR>', { noremap = true, silent = true, desc = 'Neo-tree git status' })
   end,
 }

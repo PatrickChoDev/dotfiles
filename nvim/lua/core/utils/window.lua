@@ -24,6 +24,28 @@ function M.get_regular_windows()
   return regular_windows
 end
 
+-- Focus the previously used window if it's not neo-tree, otherwise fallback to first regular window
+function M.focus_previous_regular_window()
+  local alternate_win = vim.fn.win_getid(vim.fn.winnr('#'))
+  if alternate_win ~= 0 and vim.api.nvim_win_is_valid(alternate_win) and not M.is_neotree_window(alternate_win) then
+    vim.api.nvim_set_current_win(alternate_win)
+    return true
+  end
+
+  return M.focus_first_regular_window()
+end
+
+-- Focus the first window that is not neo-tree
+function M.focus_first_regular_window()
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    if vim.api.nvim_win_is_valid(win) and not M.is_neotree_window(win) then
+      vim.api.nvim_set_current_win(win)
+      return true
+    end
+  end
+  return false
+end
+
 -- Smart window close (prevent neo-tree glitch when closing last editor window)
 function M.smart_close_window()
   local buffer_utils = require 'core.utils.buffer'

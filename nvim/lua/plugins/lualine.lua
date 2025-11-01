@@ -1,5 +1,6 @@
 return {
   'nvim-lualine/lualine.nvim',
+  event = 'VimEnter',
   config = function()
     local filetype_names = {
       TelescopePrompt = 'Telescope',

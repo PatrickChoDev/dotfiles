@@ -3,18 +3,23 @@ return {
   {
     -- Detect tabstop and shiftwidth automatically
     'tpope/vim-sleuth',
+    event = { 'BufReadPre', 'BufNewFile' },
   },
   {
     -- Powerful Git integration for Vim
     'tpope/vim-fugitive',
+    cmd = { 'Git', 'G', 'Gdiffsplit', 'Gvdiffsplit', 'Gread', 'Gwrite', 'Ggrep', 'GMove', 'GDelete', 'GBrowse', 'GRemove', 'GRename' },
   },
   {
     -- GitHub integration for vim-fugitive
     'tpope/vim-rhubarb',
+    dependencies = { 'tpope/vim-fugitive' },
+    event = 'VeryLazy',
   },
   {
     -- Hints keybinds
     'folke/which-key.nvim',
+    event = 'VeryLazy',
   },
   {
     -- Autoclose parentheses, brackets, quotes, etc.
@@ -33,6 +38,7 @@ return {
   {
     -- High-performance color highlighter
     'norcalli/nvim-colorizer.lua',
+    event = { 'BufReadPost', 'BufNewFile' },
     config = function()
       require('colorizer').setup()
     end,

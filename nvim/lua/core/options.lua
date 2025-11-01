@@ -33,7 +33,7 @@ vim.wo.signcolumn = 'auto:5' -- Keep signcolumn on by default (default: 'auto')
 vim.o.fileencoding = 'utf-8' -- The encoding written to a file (default: 'utf-8')
 vim.o.cmdheight = 1 -- More space in the Neovim command line for displaying messages (default: 1)
 vim.o.breakindent = true -- Enable break indent (default: false)
-vim.o.updatetime = 250 -- Decrease update time (default: 4000)
+vim.o.updatetime = 300 -- Decrease update time (default: 4000) - balanced for battery life
 vim.o.timeoutlen = 300 -- Time to wait for a mapped sequence to complete (in milliseconds) (default: 1000)
 vim.o.backup = false -- Creates a backup file (default: false)
 vim.o.writebackup = false -- If a file is being edited by another program (or was written to file while editing with another program), it is not allowed to be edited (default: true)
@@ -44,3 +44,4 @@ vim.opt.formatoptions:remove { 'c', 'r', 'o' } -- Don't insert the current comme
 vim.opt.runtimepath:remove '/usr/share/vim/vimfiles' -- Separate Vim plugins from Neovim in case Vim still in use (default: includes this path if Vim is installed)
 vim.o.winborder = 'single' -- Set window borders to single line (default: 'none')
 vim.opt.hidden = true
+vim.o.synmaxcol = 240 -- Maximum column to look for syntax items (default: 3000)

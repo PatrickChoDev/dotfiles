@@ -1,5 +1,11 @@
 return {
   'goolord/alpha-nvim',
+  event = function()
+    -- Only load dashboard when opening nvim without arguments
+    if vim.fn.argc(-1) == 0 then
+      return 'VimEnter'
+    end
+  end,
   dependencies = {
     'nvim-tree/nvim-web-devicons',
     'nvim-lua/plenary.nvim',

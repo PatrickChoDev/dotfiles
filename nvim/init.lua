@@ -33,6 +33,7 @@ require('lazy').setup {
   require 'plugins.multi-cursor',
   require 'plugins.conform',
   require 'plugins.nvim-lint',
+  require 'plugins.codex',
 }
 
 -- The line beneath this is called `modeline`. See `:help modeline`
