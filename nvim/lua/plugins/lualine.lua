@@ -61,25 +61,14 @@ return {
       'windows',
       show_filename_only = true,
       mode = 1,
-      max_length = vim.o.columns / 3,
       filetype_names = filetype_names,
     }
 
     local tabs = {
       'tabs',
       mode = 0,
-      max_length = vim.o.columns / 3,
       filetype_names = filetype_names,
     }
-
-    local session = function()
-      local resession = require 'resession'
-      local current = resession.get_current()
-      if current then
-        return '󰆔'
-      end
-      return ''
-    end
 
     require('lualine').setup {
       options = {
@@ -87,7 +76,7 @@ return {
         theme = 'catppuccin',
         section_separators = { left = '', right = '' },
         component_separators = { left = '', right = '' },
-        disabled_filetypes = { 'alpha', 'neo-tree' },
+        disabled_filetypes = { 'alpha', 'neo-tree', 'TelescopePrompt', 'lazy', 'mason', 'notify', 'fugitive', 'fugitiveblame' },
         always_divide_middle = true,
       },
       sections = {
@@ -97,7 +86,7 @@ return {
         lualine_x = {
           { 'filetype', cond = hide_in_width },
         },
-        lualine_y = { session},
+        lualine_y = {},
         lualine_z = { 'lsp_status' },
       },
       inactive_sections = {
@@ -114,7 +103,7 @@ return {
         lualine_c = {},
         lualine_x = {},
         lualine_y = {},
-        lualine_z = { tabs },
+        lualine_z = {  },
       },
       inactive_tabline = {
         lualine_a = { windows },

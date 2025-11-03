@@ -31,7 +31,7 @@ return {
       dashboard.button('f', '󰈞    Find file', ':Telescope find_files <CR>'),
       dashboard.button('r', '    Recent files', ':Telescope oldfiles <CR>'),
       dashboard.button('s', '    Search text', ':Telescope live_grep <CR>'),
-      dashboard.button('p', '    Projects', ':Telescope resession resession <CR>'),
+      dashboard.button('p', '    Projects', ':AutoSession search<CR>'),
       dashboard.button('c', '    Config', ':e $MYVIMRC <CR>'),
       dashboard.button('l', '󰒲    Lazy', ':Lazy<CR>'),
       dashboard.button('m', '    Mason', ':Mason<CR>'),

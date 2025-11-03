@@ -2,7 +2,7 @@ return {
   'neovim/nvim-lspconfig',
   event = { 'BufReadPre', 'BufNewFile' },
   dependencies = {
-    { 'mason-org/mason.nvim', config = true },
+    'mason-org/mason.nvim',
     'mason-org/mason-lspconfig.nvim',
     'WhoIsSethDaniel/mason-tool-installer.nvim',
     { 'rcarriga/nvim-notify', opts = { background_colour = '#000000' } },
@@ -102,15 +102,6 @@ return {
       end,
     })
 
-    require('mason').setup {
-      ui = {
-        icons = {
-          package_installed = '',
-          package_pending = '',
-          package_uninstalled = '',
-        },
-      },
-    }
     require('mason-lspconfig').setup {
       ensure_installed = {
         'lua_ls',

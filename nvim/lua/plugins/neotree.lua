@@ -39,8 +39,6 @@ return {
   },
   config = function()
     require('neo-tree').setup {
-      close_if_last_window = false,
-      auto_clean_after_session_restore = true,
       popup_border_style = 'single',
       enable_git_status = true,
       enable_diagnostics = true,
@@ -321,15 +319,6 @@ return {
     -- Trigger resize only when windows are closed to respect manual resizing
     vim.api.nvim_create_autocmd('WinEnter', {
       callback = resize_neotree,
-    })
-
-    vim.api.nvim_create_autocmd('FileType', {
-      pattern = 'neo-tree',
-      callback = function()
-        vim.wo.wrap = true
-        vim.wo.linebreak = true
-        vim.wo.showbreak = '↪ '
-      end,
     })
 
 
