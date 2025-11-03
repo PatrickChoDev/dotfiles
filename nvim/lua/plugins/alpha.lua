@@ -10,13 +10,13 @@ return {
     'nvim-tree/nvim-web-devicons',
     'nvim-lua/plenary.nvim',
     'nvim-telescope/telescope.nvim',
-    'rubiin/fortune.nvim'
+    'rubiin/fortune.nvim',
   },
 
   config = function()
     local alpha = require 'alpha'
     local dashboard = require 'alpha.themes.dashboard'
-    require("fortune").setup()
+    require('fortune').setup()
 
     dashboard.section.header.val = {
       [[.______      ___   .___________..______       __    ______  __  ___   ______  __    __    ______    _______   ___________    ____]],
@@ -38,55 +38,55 @@ return {
       dashboard.button('q', '    Quit', ':qa<CR>'),
     }
 
-    local fortune = require("fortune").get_fortune()
+    local fortune = require('fortune').get_fortune()
 
     local plugins_section = {
-            type = "text",
-            val = "⚡ Loading plugins...",
-            opts = {
-              position = "center",
-              hl = "comment"
-            }
-          }
+      type = 'text',
+      val = '⚡ Loading plugins...',
+      opts = {
+        position = 'center',
+        hl = 'comment',
+      },
+    }
 
-          local date_section = {
-                  type = "text",
-                  val = "󰸗 " .. os.date("%Y-%m-%d %H:%M:%S"),
-                  opts = {
-                    position = "center",
-                    hl = "EcovimHeaderInfo"
-                  }
-                }
+    local date_section = {
+      type = 'text',
+      val = '󰸗 ' .. os.date '%Y-%m-%d %H:%M:%S',
+      opts = {
+        position = 'center',
+        hl = 'EcovimHeaderInfo',
+      },
+    }
 
-          -- Create a timer to update the date every second
-          local timer = vim.loop.new_timer()
+    -- Create a timer to update the date every second
+    local timer = vim.loop.new_timer()
 
-          local function update_date()
-            date_section.val = "󰸗 " .. os.date("%Y-%m-%d %H:%M:%S")
-            pcall(vim.cmd.AlphaRedraw)
-          end
-
-          vim.api.nvim_create_autocmd('User', {
-                pattern = 'LazyVimStarted',
-                desc = 'Start Alpha dashboard datetime timer',
-                once = true,
-                callback = function()
-                  update_date()
-                  timer:start(1000, 1000, vim.schedule_wrap(update_date))
-                end,
-              })
+    local function update_date()
+      date_section.val = '󰸗 ' .. os.date '%Y-%m-%d %H:%M:%S'
+      pcall(vim.cmd.AlphaRedraw)
+    end
 
     vim.api.nvim_create_autocmd('User', {
-          pattern = 'LazyVimStarted',
-          desc = 'Add Alpha dashboard footer',
-          once = true,
-          callback = function()
-            local stats = require('lazy').stats()
-            local ms = math.floor(stats.startuptime * 100 + 0.5) / 100
-            plugins_section.val = "⚡ " .. stats.loaded .. "/" .. stats.count .. " plugins loaded in " .. ms .. " ms"
-            pcall(vim.cmd.AlphaRedraw)
-          end,
-        })
+      pattern = 'LazyVimStarted',
+      desc = 'Start Alpha dashboard datetime timer',
+      once = true,
+      callback = function()
+        update_date()
+        timer:start(1000, 1000, vim.schedule_wrap(update_date))
+      end,
+    })
+
+    vim.api.nvim_create_autocmd('User', {
+      pattern = 'LazyVimStarted',
+      desc = 'Add Alpha dashboard footer',
+      once = true,
+      callback = function()
+        local stats = require('lazy').stats()
+        local ms = math.floor(stats.startuptime * 100 + 0.5) / 100
+        plugins_section.val = '⚡ ' .. stats.loaded .. '/' .. stats.count .. ' plugins loaded in ' .. ms .. ' ms'
+        pcall(vim.cmd.AlphaRedraw)
+      end,
+    })
 
     dashboard.section.footer.val = fortune
 
@@ -98,14 +98,14 @@ return {
 
     -- Center the dashboard vertically
     dashboard.config.layout = {
-      { type = "padding", val = math.floor(vim.fn.winheight(0) * 0.3) },
+      { type = 'padding', val = math.floor(vim.fn.winheight(0) * 0.3) },
       dashboard.section.header,
-      { type = "padding", val = 2 },
+      { type = 'padding', val = 2 },
       dashboard.section.buttons,
-      { type = "padding", val = 2 },
+      { type = 'padding', val = 2 },
       plugins_section,
       date_section,
-      { type = "padding", val = 2 },
+      { type = 'padding', val = 2 },
       dashboard.section.footer,
     }
 

@@ -12,7 +12,7 @@ source "$DOTFILES_DIR/lib/common.sh"
 export BACKUP_TIMESTAMP
 
 # List of available programs
-PROGRAMS=("vim" "nvim" "ghostty" "zsh")
+PROGRAMS=("vim" "nvim" "ghostty" "zsh" "mise")
 
 # Extract description from install script header
 get_program_description() {
@@ -36,7 +36,7 @@ get_program_description() {
             # Stop at first non-comment line
             break
         fi
-    done < "$install_script"
+    done <"$install_script"
 
     echo "$description"
 }
@@ -48,26 +48,30 @@ check_install_status() {
 
     # Define what each program installs
     case "$program" in
-        vim)
-            local targets=("$HOME/.vimrc" "$HOME/.vim")
-            local sources=("$program_dir/.vimrc" "$program_dir/.vim")
-            ;;
-        nvim)
-            local targets=("$HOME/.config/nvim")
-            local sources=("$program_dir")
-            ;;
-        ghostty)
-            local targets=("$HOME/.config/ghostty/config" "$HOME/.config/ghostty/themes")
-            local sources=("$program_dir/config" "$program_dir/themes")
-            ;;
-        zsh)
-            local targets=("$HOME/.zshrc" "$HOME/.zshenv" "$HOME/.zprofile" "$HOME/.zsh")
-            local sources=("$program_dir/.zshrc" "$program_dir/.zshenv" "$program_dir/.zprofile" "$program_dir/.zsh")
-            ;;
-        *)
-            echo "unknown"
-            return
-            ;;
+    vim)
+        local targets=("$HOME/.vimrc" "$HOME/.vim")
+        local sources=("$program_dir/.vimrc" "$program_dir/.vim")
+        ;;
+    nvim)
+        local targets=("$HOME/.config/nvim")
+        local sources=("$program_dir")
+        ;;
+    ghostty)
+        local targets=("$HOME/.config/ghostty/config" "$HOME/.config/ghostty/themes")
+        local sources=("$program_dir/config" "$program_dir/themes")
+        ;;
+    zsh)
+        local targets=("$HOME/.zshrc" "$HOME/.zshenv" "$HOME/.zprofile" "$HOME/.zsh")
+        local sources=("$program_dir/.zshrc" "$program_dir/.zshenv" "$program_dir/.zprofile" "$program_dir/.zsh")
+        ;;
+    mise)
+        local targets=("$HOME/.config/mise/config.toml")
+        local sources=("$program_dir/config.toml")
+        ;;
+    *)
+        echo "unknown"
+        return
+        ;;
     esac
 
     local installed=0
@@ -131,22 +135,22 @@ list_programs() {
         local status_color=""
 
         case "$status" in
-            installed)
-                status_icon="${GREEN}✓${NC}"
-                status_text="${GREEN}installed${NC}"
-                ;;
-            conflict)
-                status_icon="${YELLOW}⚠${NC}"
-                status_text="${YELLOW}conflict${NC}"
-                ;;
-            not-installed)
-                status_icon="${BLUE}○${NC}"
-                status_text="${BLUE}not installed${NC}"
-                ;;
-            *)
-                status_icon="${RED}?${NC}"
-                status_text="${RED}unknown${NC}"
-                ;;
+        installed)
+            status_icon="${GREEN}✓${NC}"
+            status_text="${GREEN}installed${NC}"
+            ;;
+        conflict)
+            status_icon="${YELLOW}⚠${NC}"
+            status_text="${YELLOW}conflict${NC}"
+            ;;
+        not-installed)
+            status_icon="${BLUE}○${NC}"
+            status_text="${BLUE}not installed${NC}"
+            ;;
+        *)
+            status_icon="${RED}?${NC}"
+            status_text="${RED}unknown${NC}"
+            ;;
         esac
 
         # Print program info
@@ -155,7 +159,7 @@ list_programs() {
         # Print description (with proper indentation for multiline)
         while IFS= read -r desc_line; do
             echo -e "    $desc_line"
-        done <<< "$description"
+        done <<<"$description"
 
         echo ""
     done
@@ -187,7 +191,7 @@ install_program() {
 
 # Show usage information
 show_usage() {
-    cat << EOF
+    cat <<EOF
 Usage: $0 [COMMAND|PROGRAM]
 
 Install dotfiles by creating symlinks to their respective locations.

@@ -1,0 +1,15 @@
+[tools]
+codex = "latest"
+go = "latest"
+java = "latest"
+minikube = "latest"
+node = "lts"
+protobuf = "latest"
+python = "3.13"
+typst = "latest"
+vault = "latest"
+
+[settings]
+idiomatic_version_file = true
+experimental = true
+

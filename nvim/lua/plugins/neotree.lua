@@ -320,7 +320,5 @@ return {
     vim.api.nvim_create_autocmd('WinEnter', {
       callback = resize_neotree,
     })
-
-
   end,
 }

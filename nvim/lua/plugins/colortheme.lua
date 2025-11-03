@@ -6,8 +6,8 @@ return {
   config = function()
     require('catppuccin').setup {
       background = { -- :h background
-              light = "latte",
-              dark = "mocha",
+        light = 'latte',
+        dark = 'mocha',
       },
       transparent_background = false,
       auto_integrations = true,

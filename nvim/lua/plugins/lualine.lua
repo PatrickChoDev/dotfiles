@@ -93,7 +93,7 @@ return {
         lualine_a = {},
         lualine_b = {},
         lualine_c = {},
-        lualine_x = { },
+        lualine_x = {},
         lualine_y = {},
         lualine_z = {},
       },
@@ -103,7 +103,7 @@ return {
         lualine_c = {},
         lualine_x = {},
         lualine_y = {},
-        lualine_z = {  },
+        lualine_z = {},
       },
       inactive_tabline = {
         lualine_a = { windows },
@@ -119,7 +119,7 @@ return {
         lualine_c = {},
         lualine_x = { diff },
         lualine_y = { diagnostics },
-        lualine_z = { { 'location', padding = 0}, 'progress' } ,
+        lualine_z = { { 'location', padding = 0 }, 'progress' },
       },
       inactive_winbar = {
         lualine_a = {},
