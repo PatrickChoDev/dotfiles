@@ -45,3 +45,4 @@ vim.opt.runtimepath:remove '/usr/share/vim/vimfiles' -- Separate Vim plugins fro
 vim.o.winborder = 'single' -- Set window borders to single line (default: 'none')
 vim.opt.hidden = true
 vim.o.synmaxcol = 240 -- Maximum column to look for syntax items (default: 3000)
+vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'

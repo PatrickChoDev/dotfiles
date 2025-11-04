@@ -86,7 +86,11 @@ return {
         lualine_x = {
           { 'filetype', cond = hide_in_width },
         },
-        lualine_y = {},
+        lualine_y = {
+          function()
+            return require('auto-session.lib').current_session_name(true)
+          end,
+        },
         lualine_z = { 'lsp_status' },
       },
       inactive_sections = {
