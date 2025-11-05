@@ -37,6 +37,7 @@ require('lazy').setup {
   require 'plugins.multi-cursor',
   require 'plugins.conform',
   require 'plugins.nvim-lint',
+  require 'plugins.winshift',
   require 'plugins.codex',
 }
 

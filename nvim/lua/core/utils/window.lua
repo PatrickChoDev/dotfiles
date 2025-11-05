@@ -3,6 +3,52 @@
 local M = {}
 local nav_history = require 'core.utils.nav_history'
 
+local function close_neotree()
+  local ok_manager, manager = pcall(require, 'neo-tree.sources.manager')
+  if not ok_manager then
+    return false, nil
+  end
+
+  local state = manager.get_state 'filesystem'
+  if not state then
+    return false, nil
+  end
+
+  local winid = state.winid
+  if not winid or winid == 0 or not vim.api.nvim_win_is_valid(winid) then
+    return false, nil
+  end
+
+  local ok_command, command = pcall(require, 'neo-tree.command')
+  if not ok_command then
+    return false, nil
+  end
+
+  local position = state.current_position or 'left'
+
+  command.execute {
+    action = 'close',
+    source = 'filesystem',
+    position = position,
+  }
+
+  return true, position
+end
+
+local function reopen_neotree(position)
+  local ok_command, command = pcall(require, 'neo-tree.command')
+  if not ok_command then
+    return
+  end
+
+  command.execute {
+    action = 'show',
+    source = 'filesystem',
+    position = position or 'left',
+    focus = false,
+  }
+end
+
 -- Helper function to check if window is neo-tree
 function M.is_neotree_window(winnr)
   winnr = winnr or vim.api.nvim_get_current_win()
@@ -87,6 +133,36 @@ function M.smart_close_window()
   end
 end
 
+-- WinShift move mode (temporarily hides neo-tree)
+function M.winshift_move_mode()
+  local was_closed, position = close_neotree()
+
+  local ok, winshift = pcall(require, 'winshift')
+  if not ok then
+    if was_closed then
+      reopen_neotree(position)
+    end
+    vim.notify('winshift.nvim is not available', vim.log.levels.WARN)
+    return
+  end
+
+  local ok_cmd, err = pcall(function()
+    if type(winshift.win_move) == 'function' then
+      winshift.win_move()
+    else
+      vim.cmd 'WinShift'
+    end
+  end)
+
+  if not ok_cmd then
+    vim.notify('Failed to enter WinShift move mode: ' .. err, vim.log.levels.ERROR)
+  end
+
+  if was_closed then
+    reopen_neotree(position)
+  end
+end
+
 -- Smart window rotation (skip neo-tree)
 function M.rotate_windows(direction)
   -- Don't rotate if current window is neo-tree
@@ -133,6 +209,7 @@ function M.rotate_windows(direction)
     vim.api.nvim_win_set_cursor(regular_windows[#regular_windows], first_info.cursor)
   end
 end
+
 
 -- Smart swap function (prevent swapping with neo-tree)
 function M.smart_swap_window()

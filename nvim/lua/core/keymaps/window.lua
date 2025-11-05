@@ -27,6 +27,8 @@ function M.setup()
     window_utils.rotate_windows 'counter-clockwise'
   end, { noremap = true, silent = true, desc = '[W]indow [R]otate counter-clockwise' })
 
+  vim.keymap.set('n', '<leader>wm', window_utils.winshift_move_mode, { noremap = true, silent = true, desc = '[W]indow [M]ove mode' })
+
   -- Window navigation
   vim.keymap.set('n', '<leader>wp', function()
     window_utils.focus_previous_regular_window()
