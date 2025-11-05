@@ -48,3 +48,8 @@ vim.o.synmaxcol = 240 -- Maximum column to look for syntax items (default: 3000)
 vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
 vim.o.title = true -- Enable terminal title updates
 vim.o.titlestring = 'NEOVIM :: %t' -- Base title; project root is injected by core.title
+vim.o.autoread = true
+vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter' }, {
+  command = "if mode() != 'c' | checktime | endif",
+  pattern = '*',
+})
