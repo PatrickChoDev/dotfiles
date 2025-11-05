@@ -1,6 +1,7 @@
 -- Buffer utility functions
 
 local M = {}
+local nav_history = require 'core.utils.nav_history'
 
 -- Helper function to check if only neo-tree window remains
 function M.is_only_neotree_window()
@@ -71,25 +72,64 @@ function M.smart_close_buffer()
 
   -- If this is the last editor window (only neo-tree left), switch to next buffer then delete the old one
   if M.is_only_neotree_window() then
-    -- If only one buffer, create a new empty buffer before deleting
-    if total_buffers <= 1 then
-      vim.cmd 'enew'
-    else
-      vim.cmd 'bnext'
+    local switched = nav_history.switch_to_previous_buffer(current_buf)
+
+    if not switched then
+      if total_buffers <= 1 then
+        vim.cmd 'enew'
+        switched = true
+      else
+        switched = M.goto_previous_buffer()
+        if not switched then
+          vim.cmd 'bnext'
+          switched = vim.api.nvim_get_current_buf() ~= current_buf
+        end
+      end
     end
-    -- Delete the previous buffer if it's valid and different from current
-    if vim.api.nvim_buf_is_valid(current_buf) and current_buf ~= vim.api.nvim_get_current_buf() then
+
+    if switched and vim.api.nvim_buf_is_valid(current_buf) and current_buf ~= vim.api.nvim_get_current_buf() then
       vim.cmd('bdelete! ' .. current_buf)
     end
   else
     -- If only one buffer, create new before deleting
     if total_buffers <= 1 then
       vim.cmd 'enew'
+      if vim.api.nvim_buf_is_valid(current_buf) and current_buf ~= vim.api.nvim_get_current_buf() then
+        vim.cmd('bdelete! ' .. current_buf)
+      elseif vim.api.nvim_buf_is_valid(current_buf) then
+        vim.cmd('bdelete! ' .. current_buf)
+      end
+      return
+    end
+
+    local switched = nav_history.switch_to_previous_buffer(current_buf)
+    if not switched then
+      switched = M.goto_previous_buffer()
+      if not switched then
+        vim.cmd 'bnext'
+        switched = vim.api.nvim_get_current_buf() ~= current_buf
+      end
+    end
+
+    if switched and vim.api.nvim_buf_is_valid(current_buf) and current_buf ~= vim.api.nvim_get_current_buf() then
       vim.cmd('bdelete! ' .. current_buf)
-    else
-      vim.cmd 'bdelete!'
     end
   end
+end
+
+-- Switch to the previously used regular buffer (skips auxiliary buffers)
+function M.goto_previous_buffer()
+  if nav_history.switch_to_previous_buffer() then
+    return true
+  end
+
+  local alt = vim.fn.bufnr '#'
+  if alt ~= -1 and vim.fn.buflisted(alt) == 1 then
+    vim.cmd 'buffer #'
+    return true
+  end
+
+  return false
 end
 
 return M

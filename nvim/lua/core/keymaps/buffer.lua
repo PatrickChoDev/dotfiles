@@ -11,6 +11,7 @@ function M.setup()
   vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', opts)
   vim.keymap.set('n', '<leader>bn', ':bnext<CR>', { noremap = true, silent = true, desc = '[B]uffer [N]ext' })
   vim.keymap.set('n', '<leader>bp', ':bprevious<CR>', { noremap = true, silent = true, desc = '[B]uffer [P]revious' })
+  vim.keymap.set('n', '<leader>bb', buffer_utils.goto_previous_buffer, { noremap = true, silent = true, desc = '[B]uffer [B]ack (recent)' })
 
   -- Buffer operations
   vim.keymap.set('n', '<leader>x', buffer_utils.smart_close_buffer, { noremap = true, silent = true, desc = 'Close buffer' })

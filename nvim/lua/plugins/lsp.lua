@@ -7,8 +7,32 @@ return {
     'WhoIsSethDaniel/mason-tool-installer.nvim',
     { 'rcarriga/nvim-notify', opts = { background_colour = '#000000' } },
     'saghen/blink.cmp',
+    {
+      'adoyle-h/lsp-toggle.nvim',
+      config = function()
+        require('lsp-toggle').setup {
+          create_cmds = true,
+          telescope = true,
+        }
+      end,
+    },
+    {
+      'folke/neoconf.nvim',
+      cmd = 'Neoconf',
+      config = function()
+        require('neoconf').setup {
+          import = {
+            vscode = true,
+            coc = false,
+            nlsp = false,
+          },
+        }
+      end,
+    },
   },
   config = function()
+    local util = require 'lspconfig.util'
+
     vim.diagnostic.config {
       signs = {
         text = {
@@ -106,6 +130,7 @@ return {
       ensure_installed = {
         'lua_ls',
         'ts_ls',
+        'denols',
         'html',
         'cssls',
         'pylsp',
@@ -135,6 +160,9 @@ return {
         'clang-format',
       },
     }
+
+    local deno_root = util.root_pattern('deno.json', 'deno.jsonc', 'deno.lock')
+    local node_root = util.root_pattern('package.json', 'tsconfig.json', 'jsconfig.json', 'pnpm-workspace.yaml', 'package-lock.json', 'yarn.lock')
 
     vim.lsp.config('lua_ls', {
       settings = {
@@ -172,8 +200,34 @@ return {
       },
     })
 
+    vim.lsp.config('denols', {
+      root_dir = deno_root,
+      single_file_support = false,
+    })
+
+    vim.lsp.config('ts_ls', {
+      root_dir = function(fname)
+        if deno_root(fname) then
+          return nil
+        end
+        return node_root(fname)
+      end,
+      single_file_support = false,
+    })
+
     vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
       update_in_insert = true,
     })
+
+    local toggle_mappings = {
+      { keys = '<leader>cT', command = 'LspToggleAuto', desc = '[C]ode toggle LSP (auto)' },
+      { keys = '<leader>cB', command = 'LspToggleBuffer', desc = '[C]ode toggle LSP (buffer)' },
+    }
+
+    for _, mapping in ipairs(toggle_mappings) do
+      if vim.fn.exists(':' .. mapping.command) == 2 then
+        vim.keymap.set('n', mapping.keys, '<cmd>' .. mapping.command .. '<CR>', { desc = mapping.desc, silent = true })
+      end
+    end
   end,
 }

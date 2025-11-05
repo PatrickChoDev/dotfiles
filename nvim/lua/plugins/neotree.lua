@@ -120,10 +120,6 @@ return {
           nowait = true,
         },
         mappings = {
-          ['<space>'] = {
-            'toggle_node',
-            nowait = false, -- disable `nowait` if you have existing combos starting with this char that you want to use
-          },
           ['<2-LeftMouse>'] = 'open',
           ['<cr>'] = 'open',
           ['<esc>'] = 'cancel', -- close preview or floating neo-tree window
@@ -141,7 +137,7 @@ return {
           ['C'] = 'close_node',
           -- ['C'] = 'close_all_subnodes',
           ['z'] = 'close_all_nodes',
-          --["Z"] = "expand_all_nodes",
+          ["Z"] = "expand_all_nodes",
           ['a'] = {
             'add',
             -- this command supports BASH style brace expansion ("x{a,b,c}" -> xa,xb,xc). see `:h neo-tree-file-actions` for details
@@ -291,6 +287,26 @@ return {
             ['os'] = { 'order_by_size', nowait = false },
             ['ot'] = { 'order_by_type', nowait = false },
           },
+        },
+      },
+      event_handlers = {
+        {
+          event = 'neo_tree_root_changed',
+          handler = function()
+            local ok, title = pcall(require, 'core.title')
+            if ok and title.update then
+              title.update()
+            end
+          end,
+        },
+        {
+          event = 'neo_tree_buffer_enter',
+          handler = function()
+            local ok, title = pcall(require, 'core.title')
+            if ok and title.update then
+              title.update()
+            end
+          end,
         },
       },
     }

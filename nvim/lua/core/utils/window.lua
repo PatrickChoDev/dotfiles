@@ -1,6 +1,7 @@
 -- Window utility functions
 
 local M = {}
+local nav_history = require 'core.utils.nav_history'
 
 -- Helper function to check if window is neo-tree
 function M.is_neotree_window(winnr)
@@ -16,7 +17,7 @@ function M.get_regular_windows()
   local windows = vim.api.nvim_list_wins()
 
   for _, win in ipairs(windows) do
-    if not M.is_neotree_window(win) then
+    if nav_history.is_regular_window(win) and not M.is_neotree_window(win) then
       table.insert(regular_windows, win)
     end
   end
@@ -26,6 +27,10 @@ end
 
 -- Focus the previously used window if it's not neo-tree, otherwise fallback to first regular window
 function M.focus_previous_regular_window()
+  if nav_history.focus_previous_window() then
+    return true
+  end
+
   local alternate_win = vim.fn.win_getid(vim.fn.winnr('#'))
   if alternate_win ~= 0 and vim.api.nvim_win_is_valid(alternate_win) and not M.is_neotree_window(alternate_win) then
     vim.api.nvim_set_current_win(alternate_win)
@@ -37,11 +42,8 @@ end
 
 -- Focus the first window that is not neo-tree
 function M.focus_first_regular_window()
-  for _, win in ipairs(vim.api.nvim_list_wins()) do
-    if vim.api.nvim_win_is_valid(win) and not M.is_neotree_window(win) then
-      vim.api.nvim_set_current_win(win)
-      return true
-    end
+  if nav_history.focus_first_regular_window() then
+    return true
   end
   return false
 end
@@ -62,14 +64,22 @@ function M.smart_close_window()
 
   -- If this is the last editor window (only neo-tree left), switch buffer and delete the old one
   if buffer_utils.is_only_neotree_window() then
-    -- If only one buffer, create a new empty buffer before deleting
-    if total_buffers <= 1 then
-      vim.cmd 'enew'
-    else
-      vim.cmd 'bnext'
+    local switched = nav_history.switch_to_previous_buffer(current_buf)
+
+    if not switched then
+      if total_buffers <= 1 then
+        vim.cmd 'enew'
+        switched = true
+      else
+        switched = buffer_utils.goto_previous_buffer()
+        if not switched then
+          vim.cmd 'bnext'
+          switched = vim.api.nvim_get_current_buf() ~= current_buf
+        end
+      end
     end
-    -- Delete the previous buffer if it's valid and different from current
-    if vim.api.nvim_buf_is_valid(current_buf) and current_buf ~= vim.api.nvim_get_current_buf() then
+
+    if switched and vim.api.nvim_buf_is_valid(current_buf) and current_buf ~= vim.api.nvim_get_current_buf() then
       vim.cmd('bdelete! ' .. current_buf)
     end
   else

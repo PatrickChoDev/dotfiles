@@ -46,3 +46,5 @@ vim.o.winborder = 'single' -- Set window borders to single line (default: 'none'
 vim.opt.hidden = true
 vim.o.synmaxcol = 240 -- Maximum column to look for syntax items (default: 3000)
 vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
+vim.o.title = true -- Enable terminal title updates
+vim.o.titlestring = 'NEOVIM :: %t' -- Base title; project root is injected by core.title

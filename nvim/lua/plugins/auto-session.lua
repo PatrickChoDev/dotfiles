@@ -12,7 +12,7 @@ return {
     git_use_branch_name = true,
     cwd_change_handling = true,
     bypass_save_filetypes = { 'alpha', 'neo-tree', 'gitcommit' },
-    close_filetypes_on_save = { 'neo-tree', 'lazy', 'mason', 'toggleterm' },
+    close_filetypes_on_save = { 'neo-tree', 'lazy', 'mason' },
     purge_after_minutes = 43200, -- 30 days
     args_allow_files_auto_save = true,
     show_auto_restore_notif = true,
@@ -23,13 +23,22 @@ return {
   config = function(_, opts)
     local auto_session = require 'auto-session'
     auto_session.setup(opts)
+    local session_config = require 'auto-session.config'
+    vim.g.auto_session_enabled = session_config.auto_save ~= false
 
     local keymap = vim.keymap.set
     local key_opts = { noremap = true, silent = true }
+
+    local function toggle_auto_session()
+      local new_state = not session_config.auto_save
+      auto_session.disable_auto_save(new_state)
+      vim.g.auto_session_enabled = session_config.auto_save ~= false
+    end
 
     keymap('n', '<leader>ps', '<cmd>AutoSession save<CR>', vim.tbl_extend('force', key_opts, { desc = '[P]roject [S]ave session' }))
     keymap('n', '<leader>pr', '<cmd>AutoSession restore<CR>', vim.tbl_extend('force', key_opts, { desc = '[P]roject [R]estore session' }))
     keymap('n', '<leader>pd', '<cmd>AutoSession delete<CR>', vim.tbl_extend('force', key_opts, { desc = '[P]roject [D]elete session' }))
     keymap('n', '<leader>sp', '<cmd>AutoSession search<CR>', vim.tbl_extend('force', key_opts, { desc = '[S]earch [P]roject sessions' }))
+    keymap('n', '<leader>pT', toggle_auto_session, vim.tbl_extend('force', key_opts, { desc = '[P]roject toggle auto-session' }))
   end,
 }

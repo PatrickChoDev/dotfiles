@@ -2,6 +2,9 @@ return {
   'nvim-lualine/lualine.nvim',
   event = 'VimEnter',
   config = function()
+    local smooth_buffers = require 'core.statusline.buffers'
+    smooth_buffers.setup()
+
     local filetype_names = {
       TelescopePrompt = 'Telescope',
       ['neo-tree'] = '',
@@ -10,7 +13,6 @@ return {
       ['fugitiveblame'] = 'Blame',
       ['packer'] = 'Packer',
       ['netrw'] = 'netrw',
-      ['toggleterm'] = 'Terminal',
     }
 
     local mode = {
@@ -21,13 +23,7 @@ return {
       end,
     }
 
-    local buffers = {
-      'buffers',
-      colored = true,
-      symbols = { modified = '● ', alternate_file = '#' },
-      mode = 2,
-      filetype_names = filetype_names,
-    }
+    local buffers = smooth_buffers.component()
 
     local filename = {
       'filename',

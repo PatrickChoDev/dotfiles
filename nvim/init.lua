@@ -2,6 +2,8 @@ require 'core.options' -- Load general options
 require 'core.keymaps' -- Load general keymaps
 require 'core.snippets' -- Custom code snippets
 require 'core.autosave' -- Auto save helpers
+require('core.title').setup() -- Keep window title in sync with project root
+require('core.terminal').setup() -- Terminal helpers
 
 -- Set up the Lazy plugin manager
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'

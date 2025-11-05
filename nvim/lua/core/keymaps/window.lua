@@ -28,8 +28,12 @@ function M.setup()
   end, { noremap = true, silent = true, desc = '[W]indow [R]otate counter-clockwise' })
 
   -- Window navigation
-  vim.keymap.set('n', '<leader>wp', '<C-w>p', { noremap = true, silent = true, desc = '[W]indow [P]revious' })
-  vim.keymap.set('n', '<C-w><C-p>', '<C-w>p', opts)
+  vim.keymap.set('n', '<leader>wp', function()
+    window_utils.focus_previous_regular_window()
+  end, { noremap = true, silent = true, desc = '[W]indow [P]revious' })
+  vim.keymap.set('n', '<C-w><C-p>', function()
+    window_utils.focus_previous_regular_window()
+  end, opts)
 
   -- Navigate between splits (Ctrl + hjkl)
   vim.keymap.set('n', '<C-k>', ':wincmd k<CR>', opts)
