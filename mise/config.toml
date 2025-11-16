@@ -6,6 +6,7 @@ minikube = "latest"
 node = "lts"
 protobuf = "latest"
 python = "3.13"
+ruby = "latest"
 typst = "latest"
 vault = "latest"
 

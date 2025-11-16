@@ -7,8 +7,12 @@ function M.setup()
   local buffer_utils = require 'core.utils.buffer'
 
   -- Buffer navigation
-  vim.keymap.set('n', '<Tab>', ':bnext<CR>', opts)
-  vim.keymap.set('n', '<S-Tab>', ':bprevious<CR>', opts)
+  vim.keymap.set('n', '<Tab>', function()
+    buffer_utils.next_buffer { skip_visible = true }
+  end, { noremap = true, silent = true, desc = 'Next buffer (skip visible)' })
+  vim.keymap.set('n', '<S-Tab>', function()
+    buffer_utils.previous_buffer { skip_visible = true }
+  end, { noremap = true, silent = true, desc = 'Previous buffer (skip visible)' })
   vim.keymap.set('n', '<leader>bn', ':bnext<CR>', { noremap = true, silent = true, desc = '[B]uffer [N]ext' })
   vim.keymap.set('n', '<leader>bp', ':bprevious<CR>', { noremap = true, silent = true, desc = '[B]uffer [P]revious' })
   vim.keymap.set('n', '<leader>bb', buffer_utils.goto_previous_buffer, { noremap = true, silent = true, desc = '[B]uffer [B]ack (recent)' })

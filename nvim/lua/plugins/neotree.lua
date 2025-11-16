@@ -4,12 +4,42 @@ return {
   branch = 'v3.x',
   cmd = 'Neotree',
   keys = {
-    { '<leader>e', ':Neotree toggle position=left<CR>', desc = '[E]xplorer toggle' },
-    { '<leader>ee', ':Neotree toggle position=left<CR>', desc = '[E]xplorer [E] toggle' },
-    { '<leader>ef', ':Neotree reveal<CR>', desc = '[E]xplorer [F]ind current file' },
-    { '<leader>er', ':Neotree reveal<CR>', desc = '[E]xplorer [R]eveal current file' },
+    {
+      '<leader>e',
+      function()
+        require('core.utils.neotree').toggle_focus()
+      end,
+      desc = '[E]xplorer toggle focus',
+    },
+    {
+      '<leader>ee',
+      function()
+        require('core.utils.neotree').toggle()
+      end,
+      desc = '[E]xplorer visibility',
+    },
+    {
+      '<leader>ef',
+      function()
+        require('core.utils.neotree').reveal_current_file()
+      end,
+      desc = '[E]xplorer [F]ind current file',
+    },
+    {
+      '<leader>er',
+      function()
+        require('core.utils.neotree').reveal_current_file()
+      end,
+      desc = '[E]xplorer [R]eveal current file',
+    },
     { '<leader>gs', ':Neotree float git_status<CR>', desc = '[G]it [S]tatus' },
-    { '\\', ':Neotree focus<CR>', desc = 'Focus Neotree' },
+    {
+      '\\',
+      function()
+        require('core.utils.neotree').toggle_focus()
+      end,
+      desc = 'Focus Neo-tree / previous buffer',
+    },
     { '<leader>ngs', ':Neotree float git_status<CR>', desc = 'Neo-tree git status' },
   },
   dependencies = {
@@ -79,14 +109,14 @@ return {
         git_status = {
           symbols = {
             -- Change type
-            added = '', -- or "✚", but this is redundant info if you use git_status_colors on the name
-            modified = '', -- or "", but this is redundant info if you use git_status_colors on the name
-            deleted = '✖', -- this can only be used in the git_status source
-            renamed = '󰁕', -- this can only be used in the git_status source
+            added = '',
+            modified = '',
+            deleted = '',
+            renamed = '󰁕',
             -- Status type
-            untracked = '',
-            ignored = '', -- this can only be used in the git_status source 
-            unstaged = '',
+            untracked = '',
+            ignored = '',
+            unstaged = '',
             staged = '',
             conflict = '',
           },
@@ -271,6 +301,10 @@ return {
       git_status = {
         window = {
           position = 'float',
+          popup = {
+            size = { height = '60%', width = '80%' },
+            position = { row = '50%', col = '50%' },
+          },
           mappings = {
             ['A'] = 'git_add_all',
             ['gu'] = 'git_unstage_file',
@@ -310,6 +344,53 @@ return {
         },
       },
     }
+
+    local refresh_group = vim.api.nvim_create_augroup('NeoTreeGitAutoRefresh', { clear = true })
+
+    local function schedule_git_refresh()
+      local ok, utils = pcall(require, 'core.utils.neotree')
+      if ok and utils.schedule_git_status_refresh then
+        utils.schedule_git_status_refresh()
+      end
+    end
+
+    vim.api.nvim_create_autocmd({ 'FocusGained', 'VimResume', 'ShellCmdPost' }, {
+      group = refresh_group,
+      callback = schedule_git_refresh,
+    })
+
+    local function term_ran_git(bufnr)
+      if not bufnr or bufnr == 0 or not vim.api.nvim_buf_is_valid(bufnr) then
+        return false
+      end
+      local name = vim.api.nvim_buf_get_name(bufnr)
+      if type(name) == 'string' and name:match('term://') then
+        name = name:lower()
+        if name:match('git') then
+          return true
+        end
+        local title = vim.b[bufnr] and vim.b[bufnr].term_title
+        if type(title) == 'string' and title:lower():match('git') then
+          return true
+        end
+      end
+      return false
+    end
+
+    vim.api.nvim_create_autocmd('TermClose', {
+      group = refresh_group,
+      callback = function(event)
+        if term_ran_git(event.buf) then
+          schedule_git_refresh()
+        end
+      end,
+    })
+
+    vim.api.nvim_create_autocmd('User', {
+      group = refresh_group,
+      pattern = 'FugitiveChanged',
+      callback = schedule_git_refresh,
+    })
 
     -- Auto-resize neo-tree when windows are closed or layout changes
     local function resize_neotree()

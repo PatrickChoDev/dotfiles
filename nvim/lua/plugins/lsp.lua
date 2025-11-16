@@ -35,6 +35,7 @@ return {
 
     vim.diagnostic.config {
       signs = {
+        priority = 40,
         text = {
           [vim.diagnostic.severity.ERROR] = '',
           [vim.diagnostic.severity.WARN] = '',
@@ -161,8 +162,47 @@ return {
       },
     }
 
-    local deno_root = util.root_pattern('deno.json', 'deno.jsonc', 'deno.lock')
-    local node_root = util.root_pattern('package.json', 'tsconfig.json', 'jsconfig.json', 'pnpm-workspace.yaml', 'package-lock.json', 'yarn.lock')
+    local deno_root_pattern = util.root_pattern('deno.json', 'deno.jsonc', 'deno.lock')
+    local node_root_pattern =
+      util.root_pattern('package.json', 'tsconfig.json', 'jsconfig.json', 'pnpm-workspace.yaml', 'package-lock.json', 'yarn.lock')
+
+    local deno_indicators = { 'deno.json', 'deno.jsonc', 'deno.lock' }
+    local node_indicators = { 'package.json', 'tsconfig.json', 'jsconfig.json', 'pnpm-workspace.yaml', 'package-lock.json', 'yarn.lock' }
+
+    local function has_project_files(path, files)
+      if not path or path == '' then
+        return false
+      end
+      for _, file in ipairs(files) do
+        local target = vim.fs.joinpath(path, file)
+        if vim.uv.fs_stat(target) then
+          return true
+        end
+      end
+      return false
+    end
+
+    local function resolve_deno_root(fname)
+      local root = deno_root_pattern(fname)
+      if not root then
+        return nil
+      end
+      if has_project_files(root, node_indicators) then
+        return nil
+      end
+      return root
+    end
+
+    local function resolve_node_root(fname)
+      local root = node_root_pattern(fname)
+      if not root then
+        return nil
+      end
+      if has_project_files(root, deno_indicators) then
+        return nil
+      end
+      return root
+    end
 
     vim.lsp.config('lua_ls', {
       settings = {
@@ -201,16 +241,16 @@ return {
     })
 
     vim.lsp.config('denols', {
-      root_dir = deno_root,
+      root_dir = resolve_deno_root,
       single_file_support = false,
     })
 
     vim.lsp.config('ts_ls', {
       root_dir = function(fname)
-        if deno_root(fname) then
+        if resolve_deno_root(fname) then
           return nil
         end
-        return node_root(fname)
+        return resolve_node_root(fname)
       end,
       single_file_support = false,
     })

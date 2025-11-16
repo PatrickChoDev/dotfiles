@@ -40,5 +40,28 @@ return {
     keymap('n', '<leader>pd', '<cmd>AutoSession delete<CR>', vim.tbl_extend('force', key_opts, { desc = '[P]roject [D]elete session' }))
     keymap('n', '<leader>sp', '<cmd>AutoSession search<CR>', vim.tbl_extend('force', key_opts, { desc = '[S]earch [P]roject sessions' }))
     keymap('n', '<leader>pT', toggle_auto_session, vim.tbl_extend('force', key_opts, { desc = '[P]roject toggle auto-session' }))
+
+    vim.api.nvim_create_autocmd('VimLeavePre', {
+      desc = 'Auto-save session on exit',
+      callback = function()
+        if vim.g.auto_session_enabled then
+          pcall(vim.cmd, 'silent! AutoSession save')
+        end
+      end,
+    })
+
+    vim.api.nvim_create_autocmd('VimEnter', {
+      once = true,
+      callback = function()
+        local argv = vim.fn.argv()
+        -- Only auto restore when no file arguments are provided
+        if #argv == 0 and vim.g.auto_session_enabled then
+          local cwd_session = vim.fn.getcwd()
+          pcall(function()
+            require('auto-session').RestoreSession(cwd_session)
+          end)
+        end
+      end,
+    })
   end,
 }

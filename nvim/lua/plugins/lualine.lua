@@ -53,6 +53,16 @@ return {
       cond = hide_in_width,
     }
 
+    local terminal_indicator = {
+      function()
+        local count = require('core.terminal').count 'vertical'
+        return string.format(' %d', count)
+      end,
+      cond = function()
+        return require('core.terminal').count 'vertical' > 0
+      end,
+    }
+
     local windows = {
       'windows',
       show_filename_only = true,
@@ -81,6 +91,7 @@ return {
         lualine_c = { buffers },
         lualine_x = {
           { 'filetype', cond = hide_in_width },
+          terminal_indicator,
         },
         lualine_y = {
           function()
@@ -93,8 +104,12 @@ return {
         lualine_a = {},
         lualine_b = {},
         lualine_c = {},
-        lualine_x = {},
-        lualine_y = {},
+        lualine_x = { terminal_indicator },
+        lualine_y = {
+          function()
+            return require('auto-session.lib').current_session_name(true)
+          end,
+        },
         lualine_z = {},
       },
       tabline = {
@@ -103,7 +118,7 @@ return {
         lualine_c = {},
         lualine_x = {},
         lualine_y = {},
-        lualine_z = {},
+        lualine_z = { tabs },
       },
       inactive_tabline = {
         lualine_a = { windows },
@@ -122,14 +137,14 @@ return {
         lualine_z = { { 'location', padding = 0 }, 'progress' },
       },
       inactive_winbar = {
-        lualine_a = {},
-        lualine_b = { filename },
+        lualine_a = { filename },
+        lualine_b = {},
         lualine_c = {},
         lualine_x = {},
         lualine_y = {},
         lualine_z = {},
       },
-      extensions = { 'fugitive' },
+      extensions = { 'fugitive', 'neo-tree', 'nvim-dap-ui', 'quickfix', 'fzf', 'lazy', 'mason' },
     }
   end,
 }

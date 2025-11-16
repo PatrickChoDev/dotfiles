@@ -48,7 +48,7 @@ return {
       function()
         require('dap').set_breakpoint(vim.fn.input 'Breakpoint condition: ')
       end,
-      desc = 'Debug: Set Breakpoint',
+      desc = 'Debug: Set Breakpoint condition',
     },
     -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
     {
@@ -100,10 +100,19 @@ return {
       Stopped = '',
     }
 
+    local priority_map = {
+      Breakpoint = 60,
+      BreakpointCondition = 60,
+      BreakpointRejected = 60,
+      LogPoint = 58,
+      Stopped = 65,
+    }
+
     for type, icon in pairs(breakpoint_icons) do
       local name = 'Dap' .. type
       local hl = (type == 'Stopped') and 'DapStopped' or 'DapBreakpoint'
-      vim.fn.sign_define(name, { text = icon, texthl = hl, numhl = hl })
+      local priority = priority_map[type] or 55
+      vim.fn.sign_define(name, { text = icon, texthl = hl, numhl = hl, priority = priority })
     end
 
     dap.listeners.after.event_initialized['dapui_config'] = dapui.open

@@ -16,6 +16,17 @@ return {
         shade = 'dark',
         percentage = 0.15, -- percentage of the shade to apply to the inactive window
       },
+      highlight_overrides = {
+        all = function(colors)
+          return {
+            Cursor = { fg = colors.base, bg = colors.text, style = { 'bold' } },
+            lCursor = { fg = colors.base, bg = colors.text },
+            TermCursor = { fg = colors.base, bg = colors.text },
+            TermCursorNC = { fg = colors.text, bg = colors.surface0 },
+            CursorLineNr = { fg = colors.text, style = { 'bold' } },
+          }
+        end,
+      },
     }
     vim.cmd.colorscheme 'catppuccin'
   end,

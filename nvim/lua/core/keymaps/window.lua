@@ -5,6 +5,7 @@ local opts = { noremap = true, silent = true }
 
 function M.setup()
   local window_utils = require 'core.utils.window'
+  local terminal_utils = require 'core.terminal'
 
   -- Window splits
   vim.keymap.set('n', '<leader>v', '<C-w>v', opts) -- split window vertically
@@ -45,6 +46,12 @@ function M.setup()
 
   -- Terminal mode
   vim.keymap.set('t', '<C-\\>', '<C-\\><C-n>', opts)
+
+  -- Quickly open terminals in splits
+  vim.keymap.set('n', '<leader>tv', terminal_utils.open_terminal_vsplit, { noremap = true, silent = true, desc = '[T]erminal vertical split' })
+  vim.keymap.set('n', '<leader>th', function()
+    terminal_utils.open_terminal_hsplit { height_ratio = 0.3 }
+  end, { noremap = true, silent = true, desc = '[T]erminal horizontal split (30%)' })
 end
 
 return M

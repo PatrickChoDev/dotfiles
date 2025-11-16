@@ -4,6 +4,7 @@ require 'core.snippets' -- Custom code snippets
 require 'core.autosave' -- Auto save helpers
 require('core.title').setup() -- Keep window title in sync with project root
 require('core.terminal').setup() -- Terminal helpers
+require('core.scroll').setup() -- Dynamic scroll offsets
 
 -- Set up the Lazy plugin manager
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'

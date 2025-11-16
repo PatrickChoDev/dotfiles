@@ -5,6 +5,8 @@ vim.o.wrap = false -- Display lines as one long line (default: true)
 vim.o.linebreak = true -- Companion to wrap, don't split words (default: false)
 vim.o.mouse = 'a' -- Enable mouse mode (default: '')
 vim.o.sidescroll = 1 -- The minimal number of columns to scroll horizontally (default: 0)
+vim.o.scrolloff = 6 -- Keep cursor vertically centered when possible (default: 0)
+vim.o.sidescrolloff = 12 -- Keep cursor horizontally centered when possible (default: 0)
 vim.o.autoindent = true -- Copy indent from current line when starting new one (default: true)
 vim.o.ignorecase = true -- Case-insensitive searching UNLESS \C or capital in search (default: false)
 vim.o.smartcase = true -- Smart case (default: false)
@@ -19,7 +21,12 @@ vim.o.hlsearch = true -- Set highlight on search (default: true)
 vim.o.incsearch = true -- Show search matches as you type (default: true)
 vim.o.showmode = false -- We don't need to see things like -- INSERT -- anymore (default: true)
 vim.opt.termguicolors = true -- Set termguicolors to enable highlight groups (default: false)
-vim.opt.guicursor = 'n-v-c:block,i-ci-ve:ver25,r-cr:hor20'
+vim.opt.guicursor =
+  table.concat({
+    'n-v-c:block-Cursor/lCursor',
+    'i-ci-ve:ver25-Cursor/lCursor',
+    'r-cr:hor20-Cursor/lCursor',
+  }, ',')
 vim.o.whichwrap = 'bs<>[]hl' -- Which "horizontal" keys are allowed to travel to prev/next line (default: 'b,s')
 vim.o.numberwidth = 2 -- Set number column width to 2 {default 4} (default: 4)
 vim.o.swapfile = false -- Creates a swapfile (default: true)

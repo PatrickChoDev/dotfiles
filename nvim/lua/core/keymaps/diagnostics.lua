@@ -17,8 +17,6 @@ function M.setup()
   vim.keymap.set('n', '<leader>cD', vim.diagnostic.setloclist, { noremap = true, silent = true, desc = '[C]ode [D]iagnostics list' })
 
   -- Legacy keymaps for backward compatibility
-  vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { noremap = true, silent = true, desc = 'Open floating diagnostic message' })
-  vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { noremap = true, silent = true, desc = 'Open diagnostics list' })
 end
 
 return M

@@ -3,6 +3,22 @@
 local M = {}
 local nav_history = require 'core.utils.nav_history'
 
+local function buffers_in_other_windows()
+  local buffers = {}
+  local current_win = vim.api.nvim_get_current_win()
+
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    if win ~= current_win and vim.api.nvim_win_is_valid(win) then
+      local buf = vim.api.nvim_win_get_buf(win)
+      if nav_history.is_regular_buffer(buf) then
+        buffers[buf] = true
+      end
+    end
+  end
+
+  return buffers
+end
+
 -- Helper function to check if only neo-tree window remains
 function M.is_only_neotree_window()
   local windows = vim.api.nvim_list_wins()
@@ -130,6 +146,43 @@ function M.goto_previous_buffer()
   end
 
   return false
+end
+
+local function cycle_buffer(direction, opts)
+  opts = opts or {}
+  local skip_visible = opts.skip_visible ~= false
+  local buffers = vim.fn.getbufinfo { buflisted = 1 }
+
+  if #buffers <= 1 then
+    return
+  end
+
+  local skip_set = skip_visible and buffers_in_other_windows() or {}
+  local start_buf = vim.api.nvim_get_current_buf()
+
+  local function move_once()
+    if direction == 'previous' then
+      vim.cmd 'bprevious'
+    else
+      vim.cmd 'bnext'
+    end
+  end
+
+  for _ = 1, #buffers do
+    move_once()
+    local current = vim.api.nvim_get_current_buf()
+    if current == start_buf or not skip_set[current] then
+      break
+    end
+  end
+end
+
+function M.next_buffer(opts)
+  cycle_buffer('next', opts)
+end
+
+function M.previous_buffer(opts)
+  cycle_buffer('previous', opts)
 end
 
 return M

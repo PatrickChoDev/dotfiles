@@ -101,6 +101,9 @@ return {
     vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
     vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
     vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch [G]rep everywhere' })
+    vim.keymap.set('n', '<leader>st', function()
+      require('core.terminal').pick_terminal()
+    end, { desc = '[S]earch [T]erminal sessions' })
 
     -- File operations (organized under <leader>f)
     vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = '[F]ind [F]iles' })

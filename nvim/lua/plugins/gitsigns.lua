@@ -2,4 +2,7 @@
 return {
   'lewis6991/gitsigns.nvim',
   event = { 'BufReadPost', 'BufNewFile' },
+  opts = {
+    sign_priority = 70,
+  },
 }
