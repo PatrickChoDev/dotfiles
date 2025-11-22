@@ -192,12 +192,15 @@ local function ensure_neotree_visible()
   vim.schedule(function()
     local ok_command, command = pcall(require, 'neo-tree.command')
     if ok_command then
+      local previous_win = vim.api.nvim_get_current_win()
       command.execute {
-        action = 'show',
+        action = 'focus',
         source = 'filesystem',
         position = 'left',
-        focus = false,
       }
+      if previous_win and vim.api.nvim_win_is_valid(previous_win) then
+        pcall(vim.api.nvim_set_current_win, previous_win)
+      end
     else
       vim.cmd('Neotree filesystem show left')
       vim.cmd('wincmd p')

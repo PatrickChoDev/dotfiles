@@ -41,12 +41,17 @@ local function reopen_neotree(position)
     return
   end
 
+  local previous_win = vim.api.nvim_get_current_win()
+
   command.execute {
-    action = 'show',
+    action = 'focus',
     source = 'filesystem',
     position = position or 'left',
-    focus = false,
   }
+
+  if previous_win and vim.api.nvim_win_is_valid(previous_win) then
+    pcall(vim.api.nvim_set_current_win, previous_win)
+  end
 end
 
 -- Helper function to check if window is neo-tree

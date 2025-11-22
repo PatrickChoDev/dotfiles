@@ -44,12 +44,25 @@ end
 
 local function open(opts)
   opts = opts or {}
-  return exec(vim.tbl_extend('force', {
-    action = 'show',
+  local focus_tree = opts.focus ~= false
+  opts.focus = nil -- do not forward this flag to neo-tree
+
+  local previous_win
+  if not focus_tree then
+    previous_win = vim.api.nvim_get_current_win()
+  end
+
+  local ok = exec(vim.tbl_extend('force', {
+    action = 'focus',
     source = 'filesystem',
     position = 'left',
-    focus = true,
   }, opts))
+
+  if ok and not focus_tree and previous_win and vim.api.nvim_win_is_valid(previous_win) then
+    pcall(vim.api.nvim_set_current_win, previous_win)
+  end
+
+  return ok
 end
 
 local function close()
@@ -94,7 +107,7 @@ function M.toggle_focus()
   end
 
   local win = get_window()
-  if win then
+  if win and vim.api.nvim_win_is_valid(win) then
     vim.api.nvim_set_current_win(win)
     return
   end
@@ -105,14 +118,14 @@ end
 ---Toggle Neo-tree visibility entirely
 function M.toggle()
   if not close() then
-    open { reveal = true }
+    open { reveal = true, focus = false }
   end
 end
 
 ---Focus Neo-tree without affecting the previous buffer
 function M.focus()
   local win = get_window()
-  if win then
+  if win and vim.api.nvim_win_is_valid(win) then
     vim.api.nvim_set_current_win(win)
     return
   end

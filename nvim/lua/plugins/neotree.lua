@@ -345,6 +345,66 @@ return {
       },
     }
 
+    local function patch_invalid_focus()
+      if vim.g.__neotree_focus_patch_applied then
+        return
+      end
+
+      local ok_command, command = pcall(require, 'neo-tree.command')
+      local ok_renderer, renderer = pcall(require, 'neo-tree.ui.renderer')
+      local ok_manager, manager = pcall(require, 'neo-tree.sources.manager')
+
+      if not (ok_command and ok_renderer and ok_manager) then
+        return
+      end
+
+      local function safe_do_show_or_focus(args, state, force_navigate)
+        local window_exists = renderer.window_exists(state)
+
+        if args.action == 'show' then
+          if window_exists and not force_navigate then
+            return
+          end
+          local current_win = vim.api.nvim_get_current_win()
+          manager.navigate(state, args.dir, args.reveal_file, function()
+            if current_win ~= nil and vim.api.nvim_win_is_valid(current_win) then
+              vim.api.nvim_set_current_win(current_win)
+            end
+          end, false)
+        elseif args.action == 'focus' then
+          if window_exists then
+            local can_focus = state.winid and state.winid > 0 and vim.api.nvim_win_is_valid(state.winid)
+            if can_focus then
+              local ok_focus = pcall(vim.api.nvim_set_current_win, state.winid)
+              if not ok_focus then
+                window_exists = false
+              end
+            else
+              window_exists = false
+            end
+          end
+
+          if force_navigate or not window_exists then
+            manager.navigate(state, args.dir, args.reveal_file, nil, false)
+          end
+        end
+      end
+
+      for i = 1, 20 do
+        local name = debug.getupvalue(command.execute, i)
+        if name == nil then
+          break
+        end
+        if name == 'do_show_or_focus' then
+          debug.setupvalue(command.execute, i, safe_do_show_or_focus)
+          vim.g.__neotree_focus_patch_applied = true
+          break
+        end
+      end
+    end
+
+    patch_invalid_focus()
+
     local refresh_group = vim.api.nvim_create_augroup('NeoTreeGitAutoRefresh', { clear = true })
 
     local function schedule_git_refresh()

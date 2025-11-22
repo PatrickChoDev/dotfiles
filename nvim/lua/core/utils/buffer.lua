@@ -3,7 +3,9 @@
 local M = {}
 local nav_history = require 'core.utils.nav_history'
 
-local function buffers_in_other_windows()
+local function buffers_in_other_windows(opts)
+  opts = opts or {}
+  local skip_terminal = opts.skip_terminal ~= false
   local buffers = {}
   local current_win = vim.api.nvim_get_current_win()
 
@@ -11,7 +13,9 @@ local function buffers_in_other_windows()
     if win ~= current_win and vim.api.nvim_win_is_valid(win) then
       local buf = vim.api.nvim_win_get_buf(win)
       if nav_history.is_regular_buffer(buf) then
-        buffers[buf] = true
+        if not (skip_terminal and vim.bo[buf].buftype == 'terminal') then
+          buffers[buf] = true
+        end
       end
     end
   end
@@ -148,16 +152,33 @@ function M.goto_previous_buffer()
   return false
 end
 
+local function should_skip_buffer(bufnr, opts, skip_set)
+  if not vim.api.nvim_buf_is_valid(bufnr) then
+    return true
+  end
+
+  if opts.skip_terminal and vim.bo[bufnr].buftype == 'terminal' then
+    return true
+  end
+
+  if skip_set[bufnr] then
+    return true
+  end
+
+  return false
+end
+
 local function cycle_buffer(direction, opts)
   opts = opts or {}
   local skip_visible = opts.skip_visible ~= false
+  opts.skip_terminal = opts.skip_terminal ~= false
   local buffers = vim.fn.getbufinfo { buflisted = 1 }
 
   if #buffers <= 1 then
     return
   end
 
-  local skip_set = skip_visible and buffers_in_other_windows() or {}
+  local skip_set = skip_visible and buffers_in_other_windows(opts) or {}
   local start_buf = vim.api.nvim_get_current_buf()
 
   local function move_once()
@@ -171,7 +192,15 @@ local function cycle_buffer(direction, opts)
   for _ = 1, #buffers do
     move_once()
     local current = vim.api.nvim_get_current_buf()
-    if current == start_buf or not skip_set[current] then
+    if current == start_buf then
+      if should_skip_buffer(current, opts, skip_set) then
+        return
+      else
+        break
+      end
+    end
+
+    if not should_skip_buffer(current, opts, skip_set) then
       break
     end
   end
