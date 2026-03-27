@@ -19,6 +19,6 @@ cursor-opacity = 0.5
 mouse-shift-capture = true
 focus-follows-mouse = true
 macos-option-as-alt = left
-macos-titlebar-style = transparent
+macos-titlebar-style = tabs
 auto-update = download
 auto-update-channel = stable

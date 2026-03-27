@@ -1,14 +1,22 @@
 [tools]
-codex = "latest"
+deno = "latest"
+erlang = "latest"
+gleam = "latest"
 go = "latest"
 java = "latest"
 minikube = "latest"
 node = "lts"
+pnpm = "latest"
 protobuf = "latest"
 python = "3.13"
 ruby = "latest"
 typst = "latest"
+uv = "latest"
 vault = "latest"
+elixir = "latest"
+bun = "latest"
+mysql = "latest"
+aws-cli = { version = "latest", symlink_bins = "true" }
 
 [settings]
 idiomatic_version_file = true
