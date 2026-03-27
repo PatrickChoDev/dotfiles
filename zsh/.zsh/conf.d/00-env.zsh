@@ -1,4 +1,4 @@
-export HOMEBREW_NO_ENV_HINTS=1
+command -v brew &>/dev/null && export HOMEBREW_NO_ENV_HINTS=1
 
 # HELPER FUNCTION
 remove-zsh-hook() {

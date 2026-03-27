@@ -15,23 +15,28 @@ zstyle ':completion:*' matcher-list \
 autoload -Uz compinit
 
 ZCOMPDUMP="${ZSH_HOME}/.zcompdump"
-ZCOMPDUMP_TRACKER="${ZCOMPDUMP}.timestamp"
 
-# Get current completion sources hash (e.g., from $fpath)
-_zcompinit_fingerprint() {
-  (
-    for dir in $fpath; do
-      [[ -d "$dir" ]] && find "$dir" -type f -print0
-    done | xargs -0 stat -f '%m' 2>/dev/null
-  ) | sort | md5
+_zcompdump_needs_update() {
+  [[ ! -f "$ZCOMPDUMP" ]] && return 0
+  # Regenerate if older than 20 hours
+  zmodload zsh/stat
+  local -A _zstat
+  zstat -H _zstat "$ZCOMPDUMP"
+  local -i age=$(( EPOCHSECONDS - _zstat[mtime] ))
+  (( age > 72000 )) && return 0
+  # Regenerate if fpath element count changed (new completions installed)
+  local count_file="${ZCOMPDUMP}.fpathcount"
+  local cur_count=${#fpath[@]}
+  [[ "$(cat $count_file 2>/dev/null)" != "$cur_count" ]] && { echo $cur_count > $count_file; return 0 }
+  return 1
 }
 
-# If cache missing, or fingerprint changed → reload compinit
-if [[ ! -f "$ZCOMPDUMP_TRACKER" ]] || \
-   [[ "$(_zcompinit_fingerprint)" != "$(cat "$ZCOMPDUMP_TRACKER" 2>/dev/null)" ]]; then
+if _zcompdump_needs_update; then
   compinit -i -d "$ZCOMPDUMP"
-  _zcompinit_fingerprint > "$ZCOMPDUMP_TRACKER"
 else
   compinit -C -d "$ZCOMPDUMP"
 fi
+
+zstyle ':completion:*:descriptions' format '[%d]'
+zstyle ':completion:*' squeeze-slashes true
 

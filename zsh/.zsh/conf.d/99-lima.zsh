@@ -1,2 +1,2 @@
-alias nerdctl=nerdctl.lima
+(( IS_MACOS )) && alias nerdctl=nerdctl.lima
 
