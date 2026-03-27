@@ -29,42 +29,102 @@ return {
         }
       end,
     },
+    {
+      'elixir-tools/elixir-tools.nvim',
+      version = '*',
+      event = { 'BufReadPre', 'BufNewFile' },
+      config = function()
+        local elixir = require 'elixir'
+        local elixirls = require 'elixir.elixirls'
+
+        elixir.setup {
+          nextls = { enable = true },
+          elixirls = {
+            enable = true,
+            settings = elixirls.settings {
+              dialyzerEnabled = true,
+              enableTestLenses = true,
+            },
+            -- on_attach = function(client, bufnr)
+            --   vim.keymap.set('n', '<space>fp', ':ElixirFromPipe<cr>', { buffer = true, noremap = true })
+            --   vim.keymap.set('n', '<space>tp', ':ElixirToPipe<cr>', { buffer = true, noremap = true })
+            --   vim.keymap.set('v', '<space>em', ':ElixirExpandMacro<cr>', { buffer = true, noremap = true })
+            -- end,
+          },
+          projectionist = {
+            enable = true,
+          },
+        }
+      end,
+      dependencies = {
+        'nvim-lua/plenary.nvim',
+      },
+    },
   },
   config = function()
     local util = require 'lspconfig.util'
 
+    -- Define the icons for reuse
+    local icons = {
+      [vim.diagnostic.severity.ERROR] = '',
+      [vim.diagnostic.severity.WARN] = '',
+      [vim.diagnostic.severity.HINT] = '',
+      [vim.diagnostic.severity.INFO] = '',
+    }
+
     vim.diagnostic.config {
-      signs = {
-        priority = 40,
-        text = {
-          [vim.diagnostic.severity.ERROR] = '',
-          [vim.diagnostic.severity.WARN] = '',
-          [vim.diagnostic.severity.HINT] = '',
-          [vim.diagnostic.severity.INFO] = '',
-        },
-        numhl = {
-          [vim.diagnostic.severity.ERROR] = 'DiagnosticSignError',
-          [vim.diagnostic.severity.WARN] = 'DiagnosticSignWarn',
-          [vim.diagnostic.severity.HINT] = 'DiagnosticSignHint',
-          [vim.diagnostic.severity.INFO] = 'DiagnosticSignInfo',
-        },
-        linehl = {
-          [vim.diagnostic.severity.ERROR] = 'ErrorMsg',
-        },
+      -- 1. Signs: Only show the "Worst" icon in the gutter
+      -- signs = {
+      --   priority = 40,
+      --   text = icons,
+      --   numhl = {
+      --     [vim.diagnostic.severity.ERROR] = 'DiagnosticSignError',
+      --     [vim.diagnostic.severity.WARN] = 'DiagnosticSignWarn',
+      --     [vim.diagnostic.severity.HINT] = 'DiagnosticSignHint',
+      --     [vim.diagnostic.severity.INFO] = 'DiagnosticSignInfo',
+      --   },
+      --   -- Removing linehl for Error as it can make the code hard to read
+      -- },
+      signs = false,
+
+      -- 2. Virtual Text: Show ONLY a short title/type at the end of the line
+      virtual_text = {
+        severity_sort = true,
+        spacing = 4,
+        prefix = '',
+        format = function(diagnostic)
+          -- Show only the first 20 chars of the error to keep the buffer clean
+          local title = vim.split(diagnostic.message, '\n')[1]
+          if #title > 30 then
+            return string.format(' %s %s...', icons[diagnostic.severity], string.sub(title, 1, 30))
+          end
+          return string.format(' %s %s', icons[diagnostic.severity], title)
+        end,
       },
 
-      virtual_text = true,
+      -- 3. Cursorline Logic: Handled via an Autocmd for a "Stacked" Float
       underline = true,
       severity_sort = true,
       update_in_insert = true,
       float = {
-        border = 'single',
-        source = true,
+        border = 'single', -- 'rounded' or 'single'
+        source = 'if_many', -- Only shows 'rustc' if there are multiple sources
         header = '',
         prefix = '',
+        scope = 'line', -- This shows ALL diagnostics for the line in one box
       },
     }
 
+    -- 4. The Trigger: Automatic "Box" at cursorline
+    vim.api.nvim_create_autocmd('CursorHold', {
+      callback = function()
+        vim.diagnostic.open_float(nil, {
+          focusable = false,
+          -- This ensures the box stays out of your way while moving
+          close_events = { 'CursorMoved', 'CursorMovedI', 'BufHidden', 'InsertCharPre' },
+        })
+      end,
+    })
     -- LSP keymaps
     vim.api.nvim_create_autocmd('LspAttach', {
       group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
@@ -162,47 +222,7 @@ return {
       },
     }
 
-    local deno_root_pattern = util.root_pattern('deno.json', 'deno.jsonc', 'deno.lock')
-    local node_root_pattern =
-      util.root_pattern('package.json', 'tsconfig.json', 'jsconfig.json', 'pnpm-workspace.yaml', 'package-lock.json', 'yarn.lock')
-
-    local deno_indicators = { 'deno.json', 'deno.jsonc', 'deno.lock' }
-    local node_indicators = { 'package.json', 'tsconfig.json', 'jsconfig.json', 'pnpm-workspace.yaml', 'package-lock.json', 'yarn.lock' }
-
-    local function has_project_files(path, files)
-      if not path or path == '' then
-        return false
-      end
-      for _, file in ipairs(files) do
-        local target = vim.fs.joinpath(path, file)
-        if vim.uv.fs_stat(target) then
-          return true
-        end
-      end
-      return false
-    end
-
-    local function resolve_deno_root(fname)
-      local root = deno_root_pattern(fname)
-      if not root then
-        return nil
-      end
-      if has_project_files(root, node_indicators) then
-        return nil
-      end
-      return root
-    end
-
-    local function resolve_node_root(fname)
-      local root = node_root_pattern(fname)
-      if not root then
-        return nil
-      end
-      if has_project_files(root, deno_indicators) then
-        return nil
-      end
-      return root
-    end
+    vim.lsp.enable 'gleam'
 
     vim.lsp.config('lua_ls', {
       settings = {
@@ -238,21 +258,6 @@ return {
           },
         },
       },
-    })
-
-    vim.lsp.config('denols', {
-      root_dir = resolve_deno_root,
-      single_file_support = false,
-    })
-
-    vim.lsp.config('ts_ls', {
-      root_dir = function(fname)
-        if resolve_deno_root(fname) then
-          return nil
-        end
-        return resolve_node_root(fname)
-      end,
-      single_file_support = false,
     })
 
     vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {

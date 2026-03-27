@@ -19,6 +19,7 @@ return {
       end,
     },
     { 'nvim-telescope/telescope-ui-select.nvim' },
+    { 'scottmckendry/pick-resession.nvim' },
 
     -- Useful for getting pretty icons, but requires a Nerd Font.
     { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
@@ -83,6 +84,10 @@ return {
         ['ui-select'] = {
           require('telescope.themes').get_dropdown(),
         },
+        resession = {
+          prompt_title = 'Find Sessions', -- telescope prompt title
+          dir = 'session', -- directory where resession stores sessions
+        },
       },
     }
 
@@ -101,9 +106,7 @@ return {
     vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
     vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = '[S]earch [S]elect Telescope' })
     vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = '[S]earch [G]rep everywhere' })
-    vim.keymap.set('n', '<leader>st', function()
-      require('core.terminal').pick_terminal()
-    end, { desc = '[S]earch [T]erminal sessions' })
+
 
     -- File operations (organized under <leader>f)
     vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = '[F]ind [F]iles' })

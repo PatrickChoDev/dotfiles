@@ -182,32 +182,6 @@ function TerminalRegistry.list()
   return list
 end
 
-local function ensure_neotree_visible()
-  for _, win in ipairs(vim.api.nvim_list_wins()) do
-    if window_utils.is_neotree_window(win) then
-      return
-    end
-  end
-
-  vim.schedule(function()
-    local ok_command, command = pcall(require, 'neo-tree.command')
-    if ok_command then
-      local previous_win = vim.api.nvim_get_current_win()
-      command.execute {
-        action = 'focus',
-        source = 'filesystem',
-        position = 'left',
-      }
-      if previous_win and vim.api.nvim_win_is_valid(previous_win) then
-        pcall(vim.api.nvim_set_current_win, previous_win)
-      end
-    else
-      vim.cmd('Neotree filesystem show left')
-      vim.cmd('wincmd p')
-    end
-  end)
-end
-
 local function terminal_title(bufnr, root)
   terminal_counter = terminal_counter + 1
   local label = string.format('Terminal %02d', terminal_counter)
@@ -258,7 +232,6 @@ function M.setup()
 
       prepare_terminal_buffer(event.buf)
       TerminalRegistry.add(event.buf, vim.b[event.buf].core_terminal_direction)
-      ensure_neotree_visible()
       vim.schedule(function()
         if vim.api.nvim_buf_is_valid(event.buf) and vim.api.nvim_buf_get_option(event.buf, 'buftype') == 'terminal' then
           if vim.api.nvim_get_current_buf() == event.buf then
@@ -437,6 +410,41 @@ local function telescope_pick_terminal(entries)
   end)
 
   picker:find()
+end
+
+function M.toggle_terminal(direction, opts)
+  direction = direction or 'horizontal'
+
+  -- Find a terminal with the requested direction
+  local visible_win = nil
+  local hidden_bufnr = nil
+
+  for bufnr, info in pairs(active_terminals) do
+    if info.direction == direction and vim.api.nvim_buf_is_valid(bufnr) then
+      local win = vim.fn.bufwinid(bufnr)
+      if win ~= -1 and vim.api.nvim_win_is_valid(win) then
+        visible_win = win
+        break
+      else
+        hidden_bufnr = bufnr
+      end
+    end
+  end
+
+  if visible_win then
+    -- Hide: close the window, keep the buffer alive
+    pcall(vim.api.nvim_win_close, visible_win, false)
+  elseif hidden_bufnr then
+    -- Show: re-open the hidden terminal in a split
+    focus_terminal_buffer(hidden_bufnr)
+    local win = vim.fn.bufwinid(hidden_bufnr)
+    if win ~= -1 then
+      adjust_split_size(direction, win, opts)
+    end
+  else
+    -- Create: no terminal of this direction exists yet
+    open_terminal_split(direction, opts)
+  end
 end
 
 function M.pick_terminal()

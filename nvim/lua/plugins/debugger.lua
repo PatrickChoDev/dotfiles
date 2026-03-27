@@ -58,6 +58,27 @@ return {
       end,
       desc = 'Debug: See last session result.',
     },
+    {
+      '<leader>du',
+      function()
+        require('dapui').toggle()
+      end,
+      desc = '[D]ebug [U]I toggle',
+    },
+    {
+      '<leader>dc',
+      function()
+        require('dap').terminate()
+      end,
+      desc = '[D]ebug [C]lose/terminate session',
+    },
+    {
+      '<leader>dr',
+      function()
+        require('dap').run_last()
+      end,
+      desc = '[D]ebug [R]un last',
+    },
   },
   config = function()
     local dap = require 'dap'
@@ -69,6 +90,9 @@ return {
 
       ensure_installed = {
         'delve',
+        'debugpy',
+        'js-debug-adapter',
+        'codelldb',
       },
     }
 
@@ -125,5 +149,95 @@ return {
         detached = vim.fn.has 'win32' == 0,
       },
     }
+
+    -- Python (debugpy)
+    dap.adapters.python = function(cb, config)
+      if config.request == 'attach' then
+        local port = (config.connect or config).port
+        cb { type = 'server', port = port, host = (config.connect or config).host or '127.0.0.1' }
+      else
+        cb {
+          type = 'executable',
+          command = vim.fn.exepath 'debugpy-adapter' ~= '' and vim.fn.exepath 'debugpy-adapter' or 'python',
+          args = config.request == 'launch' and {} or { '-m', 'debugpy.adapter' },
+        }
+      end
+    end
+    dap.configurations.python = {
+      {
+        type = 'python',
+        request = 'launch',
+        name = 'Launch file',
+        program = '${file}',
+        pythonPath = function()
+          local venv = vim.fn.getcwd() .. '/.venv/bin/python'
+          return vim.fn.executable(venv) == 1 and venv or vim.fn.exepath 'python3' or 'python'
+        end,
+      },
+    }
+
+    -- C / C++ / Rust (codelldb)
+    local codelldb_path = vim.fn.stdpath 'data' .. '/mason/packages/codelldb/extension/adapter/codelldb'
+    dap.adapters.codelldb = {
+      type = 'server',
+      port = '${port}',
+      executable = {
+        command = codelldb_path,
+        args = { '--port', '${port}' },
+      },
+    }
+    for _, lang in ipairs { 'c', 'cpp', 'rust' } do
+      dap.configurations[lang] = {
+        {
+          type = 'codelldb',
+          request = 'launch',
+          name = 'Launch executable',
+          program = function()
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+          end,
+          cwd = '${workspaceFolder}',
+          stopOnEntry = false,
+        },
+        {
+          type = 'codelldb',
+          request = 'attach',
+          name = 'Attach to process',
+          pid = require('dap.utils').pick_process,
+          cwd = '${workspaceFolder}',
+        },
+      }
+    end
+
+    -- JavaScript / TypeScript (vscode-js-debug)
+    dap.adapters['pwa-node'] = {
+      type = 'server',
+      host = 'localhost',
+      port = '${port}',
+      executable = {
+        command = 'node',
+        args = {
+          vim.fn.stdpath 'data' .. '/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js',
+          '${port}',
+        },
+      },
+    }
+    for _, lang in ipairs { 'javascript', 'typescript', 'javascriptreact', 'typescriptreact' } do
+      dap.configurations[lang] = {
+        {
+          type = 'pwa-node',
+          request = 'launch',
+          name = 'Launch file',
+          program = '${file}',
+          cwd = '${workspaceFolder}',
+        },
+        {
+          type = 'pwa-node',
+          request = 'attach',
+          name = 'Attach to process',
+          processId = require('dap.utils').pick_process,
+          cwd = '${workspaceFolder}',
+        },
+      }
+    end
   end,
 }

@@ -24,7 +24,7 @@ local function close_neotree()
     return false, nil
   end
 
-  local position = state.current_position or 'left'
+  local position = state.current_position or 'float'
 
   command.execute {
     action = 'close',
@@ -46,7 +46,7 @@ local function reopen_neotree(position)
   command.execute {
     action = 'focus',
     source = 'filesystem',
-    position = position or 'left',
+    position = position or 'float',
   }
 
   if previous_win and vim.api.nvim_win_is_valid(previous_win) then
@@ -271,6 +271,10 @@ function M.equalize_windows()
   vim.cmd 'wincmd ='
 
   if neotree_win then
+    local win_config = vim.api.nvim_win_get_config(neotree_win)
+    if win_config and win_config.relative ~= '' then
+      return
+    end
     -- Set neo-tree to default width (usually around 40 columns)
     vim.api.nvim_win_set_width(neotree_win, 40)
   end

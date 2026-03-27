@@ -33,8 +33,6 @@ function M.setup()
   vim.keymap.set('n', '<leader>x', buffer_utils.smart_close_buffer, { noremap = true, silent = true, desc = 'Close buffer' })
   vim.keymap.set('n', '<leader>bx', buffer_utils.smart_close_buffer, { noremap = true, silent = true, desc = '[B]uffer [X] (close)' })
   vim.keymap.set('n', '<leader>bN', '<cmd>enew<CR>', { noremap = true, silent = true, desc = '[B]uffer [N]ew' })
-  vim.keymap.set('n', '<leader>b', '<cmd>enew<CR>', opts)
-  vim.keymap.set('n', '<leader>br', vim.lsp.buf.rename, { noremap = true, silent = true, desc = '[B]uffer [R]ename' })
 end
 
 return M

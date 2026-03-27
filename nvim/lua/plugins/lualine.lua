@@ -88,7 +88,7 @@ return {
       sections = {
         lualine_a = { mode },
         lualine_b = { 'branch' },
-        lualine_c = { buffers },
+        lualine_c = {},
         lualine_x = {
           { 'filetype', cond = hide_in_width },
           terminal_indicator,
@@ -115,7 +115,7 @@ return {
       tabline = {
         lualine_a = { windows },
         lualine_b = {},
-        lualine_c = {},
+        lualine_c = { buffers },
         lualine_x = {},
         lualine_y = {},
         lualine_z = { tabs },
@@ -123,7 +123,7 @@ return {
       inactive_tabline = {
         lualine_a = { windows },
         lualine_b = {},
-        lualine_c = {},
+        lualine_c = { buffers },
         lualine_x = {},
         lualine_y = {},
         lualine_z = { tabs },

@@ -1,6 +1,6 @@
 return {
   'nvim-neo-tree/neo-tree.nvim',
-  lazy = false,
+  lazy = true,
   branch = 'v3.x',
   cmd = 'Neotree',
   keys = {
@@ -143,8 +143,11 @@ return {
         },
       },
       window = {
-        position = 'left',
-        width = 40,
+        position = 'float',
+        popup = {
+          size = { height = '80%', width = '70%' },
+          position = { row = '50%', col = '50%' },
+        },
         mapping_options = {
           noremap = true,
           nowait = true,
@@ -167,7 +170,7 @@ return {
           ['C'] = 'close_node',
           -- ['C'] = 'close_all_subnodes',
           ['z'] = 'close_all_nodes',
-          ["Z"] = "expand_all_nodes",
+          ['Z'] = 'expand_all_nodes',
           ['a'] = {
             'add',
             -- this command supports BASH style brace expansion ("x{a,b,c}" -> xa,xb,xc). see `:h neo-tree-file-actions` for details
@@ -236,7 +239,7 @@ return {
           leave_dirs_open = true, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
         },
         group_empty_dirs = false, -- when true, empty folders will be grouped together
-        hijack_netrw_behavior = 'open_default', -- netrw disabled, opening a directory opens neo-tree
+        hijack_netrw_behavior = 'open_default', -- leave netrw alone; neo-tree does not handle opening dirs
         -- in whatever position is specified in window.position
         -- "open_current",  -- netrw disabled, opening a directory opens within the
         -- window like netrw would, regardless of window.position
@@ -344,138 +347,5 @@ return {
         },
       },
     }
-
-    local function patch_invalid_focus()
-      if vim.g.__neotree_focus_patch_applied then
-        return
-      end
-
-      local ok_command, command = pcall(require, 'neo-tree.command')
-      local ok_renderer, renderer = pcall(require, 'neo-tree.ui.renderer')
-      local ok_manager, manager = pcall(require, 'neo-tree.sources.manager')
-
-      if not (ok_command and ok_renderer and ok_manager) then
-        return
-      end
-
-      local function safe_do_show_or_focus(args, state, force_navigate)
-        local window_exists = renderer.window_exists(state)
-
-        if args.action == 'show' then
-          if window_exists and not force_navigate then
-            return
-          end
-          local current_win = vim.api.nvim_get_current_win()
-          manager.navigate(state, args.dir, args.reveal_file, function()
-            if current_win ~= nil and vim.api.nvim_win_is_valid(current_win) then
-              vim.api.nvim_set_current_win(current_win)
-            end
-          end, false)
-        elseif args.action == 'focus' then
-          if window_exists then
-            local can_focus = state.winid and state.winid > 0 and vim.api.nvim_win_is_valid(state.winid)
-            if can_focus then
-              local ok_focus = pcall(vim.api.nvim_set_current_win, state.winid)
-              if not ok_focus then
-                window_exists = false
-              end
-            else
-              window_exists = false
-            end
-          end
-
-          if force_navigate or not window_exists then
-            manager.navigate(state, args.dir, args.reveal_file, nil, false)
-          end
-        end
-      end
-
-      for i = 1, 20 do
-        local name = debug.getupvalue(command.execute, i)
-        if name == nil then
-          break
-        end
-        if name == 'do_show_or_focus' then
-          debug.setupvalue(command.execute, i, safe_do_show_or_focus)
-          vim.g.__neotree_focus_patch_applied = true
-          break
-        end
-      end
-    end
-
-    patch_invalid_focus()
-
-    local refresh_group = vim.api.nvim_create_augroup('NeoTreeGitAutoRefresh', { clear = true })
-
-    local function schedule_git_refresh()
-      local ok, utils = pcall(require, 'core.utils.neotree')
-      if ok and utils.schedule_git_status_refresh then
-        utils.schedule_git_status_refresh()
-      end
-    end
-
-    vim.api.nvim_create_autocmd({ 'FocusGained', 'VimResume', 'ShellCmdPost' }, {
-      group = refresh_group,
-      callback = schedule_git_refresh,
-    })
-
-    local function term_ran_git(bufnr)
-      if not bufnr or bufnr == 0 or not vim.api.nvim_buf_is_valid(bufnr) then
-        return false
-      end
-      local name = vim.api.nvim_buf_get_name(bufnr)
-      if type(name) == 'string' and name:match('term://') then
-        name = name:lower()
-        if name:match('git') then
-          return true
-        end
-        local title = vim.b[bufnr] and vim.b[bufnr].term_title
-        if type(title) == 'string' and title:lower():match('git') then
-          return true
-        end
-      end
-      return false
-    end
-
-    vim.api.nvim_create_autocmd('TermClose', {
-      group = refresh_group,
-      callback = function(event)
-        if term_ran_git(event.buf) then
-          schedule_git_refresh()
-        end
-      end,
-    })
-
-    vim.api.nvim_create_autocmd('User', {
-      group = refresh_group,
-      pattern = 'FugitiveChanged',
-      callback = schedule_git_refresh,
-    })
-
-    -- Auto-resize neo-tree when windows are closed or layout changes
-    local function resize_neotree()
-      vim.schedule(function()
-        -- Check if any neo-tree window exists
-        for _, win in ipairs(vim.api.nvim_list_wins()) do
-          if vim.api.nvim_win_is_valid(win) then
-            local buf = vim.api.nvim_win_get_buf(win)
-            local ft = vim.api.nvim_get_option_value('filetype', { buf = buf })
-            if ft == 'neo-tree' then
-              local current_width = vim.api.nvim_win_get_width(win)
-              -- Only resize if it's significantly different from default
-              if current_width > 45 or current_width < 35 then
-                vim.api.nvim_win_set_width(win, 40)
-              end
-              break
-            end
-          end
-        end
-      end)
-    end
-
-    -- Trigger resize only when windows are closed to respect manual resizing
-    vim.api.nvim_create_autocmd('WinEnter', {
-      callback = resize_neotree,
-    })
   end,
 }

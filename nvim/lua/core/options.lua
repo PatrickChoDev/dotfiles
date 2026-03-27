@@ -14,19 +14,18 @@ vim.o.shiftwidth = 2 -- The number of spaces inserted for each indentation (defa
 vim.o.tabstop = 2 -- Insert n spaces for a tab (default: 8)
 vim.o.softtabstop = 2 -- Number of spaces that a tab counts for while performing editing operations (default: 0)
 vim.o.expandtab = true -- Convert tabs to spaces (default: false)
-vim.o.cursorline = false -- Highlight the current line (default: false)
+vim.o.cursorline = true -- Highlight the current line (default: false)
 vim.o.splitbelow = true -- Force all horizontal splits to go below current window (default: false)
 vim.o.splitright = true -- Force all vertical splits to go to the right of current window (default: false)
 vim.o.hlsearch = true -- Set highlight on search (default: true)
 vim.o.incsearch = true -- Show search matches as you type (default: true)
 vim.o.showmode = false -- We don't need to see things like -- INSERT -- anymore (default: true)
 vim.opt.termguicolors = true -- Set termguicolors to enable highlight groups (default: false)
-vim.opt.guicursor =
-  table.concat({
-    'n-v-c:block-Cursor/lCursor',
-    'i-ci-ve:ver25-Cursor/lCursor',
-    'r-cr:hor20-Cursor/lCursor',
-  }, ',')
+vim.opt.guicursor = table.concat({
+  'n-v-c:block-Cursor/lCursor',
+  'i-ci-ve:ver25-Cursor/lCursor',
+  'r-cr:hor20-Cursor/lCursor',
+}, ',')
 vim.o.whichwrap = 'bs<>[]hl' -- Which "horizontal" keys are allowed to travel to prev/next line (default: 'b,s')
 vim.o.numberwidth = 2 -- Set number column width to 2 {default 4} (default: 4)
 vim.o.swapfile = false -- Creates a swapfile (default: true)
@@ -36,7 +35,7 @@ vim.o.backspace = 'indent,eol,start' -- Allow backspace on (default: 'indent,eol
 vim.o.pumheight = 10 -- Pop up menu height (default: 0)
 vim.o.conceallevel = 0 -- So that `` is visible in markdown files (default: 1)
 vim.o.laststatus = 3 -- Always display the status line (default: 2)
-vim.wo.signcolumn = 'auto:5' -- Keep signcolumn on by default (default: 'auto')
+vim.wo.signcolumn = 'auto:3' -- Keep signcolumn on by default (default: 'auto')
 vim.o.fileencoding = 'utf-8' -- The encoding written to a file (default: 'utf-8')
 vim.o.cmdheight = 1 -- More space in the Neovim command line for displaying messages (default: 1)
 vim.o.breakindent = true -- Enable break indent (default: false)
@@ -52,7 +51,7 @@ vim.opt.runtimepath:remove '/usr/share/vim/vimfiles' -- Separate Vim plugins fro
 vim.o.winborder = 'single' -- Set window borders to single line (default: 'none')
 vim.opt.hidden = true
 vim.o.synmaxcol = 240 -- Maximum column to look for syntax items (default: 3000)
-vim.o.sessionoptions = 'blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
+vim.o.sessionoptions = 'buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions'
 vim.o.title = true -- Enable terminal title updates
 vim.o.titlestring = 'NEOVIM :: %t' -- Base title; project root is injected by core.title
 vim.o.autoread = true

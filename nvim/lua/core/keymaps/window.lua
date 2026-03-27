@@ -8,11 +8,8 @@ function M.setup()
   local terminal_utils = require 'core.terminal'
 
   -- Window splits
-  vim.keymap.set('n', '<leader>v', '<C-w>v', opts) -- split window vertically
   vim.keymap.set('n', '<leader>wv', '<C-w>v', { noremap = true, silent = true, desc = '[W]indow split [V]ertical' })
-  vim.keymap.set('n', '<leader>h', '<C-w>s', opts) -- split window horizontally
   vim.keymap.set('n', '<leader>wh', '<C-w>s', { noremap = true, silent = true, desc = '[W]indow split [H]orizontal' })
-  vim.keymap.set('n', '<leader>ws', '<C-w>s', { noremap = true, silent = true, desc = '[W]indow [S]plit horizontal' })
 
   -- Window management
   vim.keymap.set('n', '<leader>wc', window_utils.smart_close_window, { noremap = true, silent = true, desc = '[W]indow [C]lose' })
@@ -44,14 +41,28 @@ function M.setup()
   vim.keymap.set('n', '<C-h>', ':wincmd h<CR>', opts)
   vim.keymap.set('n', '<C-l>', ':wincmd l<CR>', opts)
 
-  -- Terminal mode
+  -- Terminal mode: exit to normal
   vim.keymap.set('t', '<C-\\>', '<C-\\><C-n>', opts)
+
+  -- Terminal mode: navigate windows without leaving insert mode
+  vim.keymap.set('t', '<C-h>', '<C-\\><C-n><C-w>h', opts)
+  vim.keymap.set('t', '<C-j>', '<C-\\><C-n><C-w>j', opts)
+  vim.keymap.set('t', '<C-k>', '<C-\\><C-n><C-w>k', opts)
+  vim.keymap.set('t', '<C-l>', '<C-\\><C-n><C-w>l', opts)
 
   -- Quickly open terminals in splits
   vim.keymap.set('n', '<leader>tv', terminal_utils.open_terminal_vsplit, { noremap = true, silent = true, desc = '[T]erminal vertical split' })
   vim.keymap.set('n', '<leader>th', function()
     terminal_utils.open_terminal_hsplit { height_ratio = 0.3 }
-  end, { noremap = true, silent = true, desc = '[T]erminal horizontal split (30%)' })
+  end, { noremap = true, silent = true, desc = '[T]erminal [H]orizontal split (30%)' })
+
+  -- Toggle last hsplit terminal (open if hidden, hide if visible, create if none)
+  vim.keymap.set('n', '<leader>tt', function()
+    terminal_utils.toggle_terminal('horizontal', { height_ratio = 0.3 })
+  end, { noremap = true, silent = true, desc = '[T]erminal [T]oggle' })
+
+  -- Select terminal session via Telescope
+  vim.keymap.set('n', '<leader>ts', terminal_utils.pick_terminal, { noremap = true, silent = true, desc = '[T]erminal [S]elect' })
 end
 
 return M
