@@ -8,104 +8,57 @@ DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Source common functions
 source "$DOTFILES_DIR/lib/common.sh"
 
-# Export backup timestamp for all child scripts to use
+# Export so child install scripts inherit it
+export DOTFILES_DIR
 export BACKUP_TIMESTAMP
 
-# List of available programs
-PROGRAMS=("vim" "nvim" "ghostty" "zsh" "mise" "tmux" "starship")
-
-# Extract description from install script header
-get_program_description() {
-    local install_script="$1"
-    local description=""
-
-    if [ ! -f "$install_script" ]; then
-        echo "No install script found"
-        return
-    fi
-
-    # Extract all Description lines
-    while IFS= read -r line; do
-        if [[ "$line" =~ ^#\ Description:\ (.+)$ ]]; then
-            description="${BASH_REMATCH[1]}"
-        elif [[ "$line" =~ ^#\ Installs:\ (.+)$ ]]; then
-            if [ -n "$description" ]; then
-                description="$description"$'\n'"    Installs: ${BASH_REMATCH[1]}"
-            fi
-        elif [[ "$line" =~ ^[^#] ]]; then
-            # Stop at first non-comment line
-            break
+# Auto-discover programs: any subdirectory containing a links.sh
+get_programs() {
+    local programs=()
+    for dir in "$DOTFILES_DIR"/*/; do
+        if [ -f "${dir}links.sh" ]; then
+            programs+=("$(basename "$dir")")
         fi
-    done <"$install_script"
-
-    echo "$description"
+    done
+    echo "${programs[@]}"
 }
 
-# Check installation status for a program
+# Check installation status for a program by reading its links.sh
 check_install_status() {
     local program="$1"
     local program_dir="$DOTFILES_DIR/$program"
 
-    # Define what each program installs
-    case "$program" in
-    vim)
-        local targets=("$HOME/.vimrc" "$HOME/.vim")
-        local sources=("$program_dir/.vimrc" "$program_dir/.vim")
-        ;;
-    nvim)
-        local targets=("$HOME/.config/nvim")
-        local sources=("$program_dir")
-        ;;
-    ghostty)
-        local targets=("$HOME/.config/ghostty/config" "$HOME/.config/ghostty/themes")
-        local sources=("$program_dir/config" "$program_dir/themes")
-        ;;
-    zsh)
-        local targets=("$HOME/.zshrc" "$HOME/.zshenv" "$HOME/.zprofile" "$HOME/.zsh")
-        local sources=("$program_dir/.zshrc" "$program_dir/.zshenv" "$program_dir/.zprofile" "$program_dir/.zsh")
-        ;;
-    mise)
-        local targets=("$HOME/.config/mise/config.toml")
-        local sources=("$program_dir/config.toml")
-        ;;
-    tmux)
-        local targets=("$HOME/.tmux.conf" "$HOME/.tmux/plugins")
-        local sources=("$program_dir/tmux.conf" "$program_dir/plugins")
-        ;;
-    starship)
-        local targets=("$HOME/.config/starship.toml")
-        local source=("$program_dir/starship/starship.toml")
-        ;;
-    *)
-        echo "unknown"
-        return
-        ;;
-    esac
+    load_module_links "$program_dir" 2>/dev/null || { echo "unknown"; return; }
 
-    local installed=0
-    local conflict=0
-    local free=0
+    local installed=0 conflict=0 free=0
 
-    for i in "${!targets[@]}"; do
-        local target="${targets[$i]}"
-        local source="${sources[$i]}"
+    for entry in "${LINKS[@]}"; do
+        local src target
+        src="$(echo "${entry%% ->*}" | xargs)"
+        target="$(echo "${entry##*-> }" | xargs)"
+
+        local abs_src
+        if [ "$src" = "." ]; then
+            abs_src="$program_dir"
+        else
+            abs_src="$program_dir/$src"
+        fi
+        target="${target/#\~/$HOME}"
+
+        # Skip entries whose source doesn't exist (optional links)
+        [ -e "$abs_src" ] || continue
 
         if [ -e "$target" ] || [ -L "$target" ]; then
-            # Something exists at target
-            if [ -L "$target" ] && [ "$(readlink "$target")" = "$source" ]; then
-                # Correct symlink
+            if [ -L "$target" ] && [ "$(readlink "$target")" = "$abs_src" ]; then
                 ((installed++))
             else
-                # Conflict
                 ((conflict++))
             fi
         else
-            # Nothing exists
             ((free++))
         fi
     done
 
-    # Determine overall status
     if [ $installed -gt 0 ] && [ $conflict -eq 0 ] && [ $free -eq 0 ]; then
         echo "installed"
     elif [ $conflict -gt 0 ]; then
@@ -115,60 +68,37 @@ check_install_status() {
     fi
 }
 
-# List all available programs with details
+# List all available programs with status
 list_programs() {
     echo -e "${BLUE}Available programs:${NC}"
     echo ""
 
-    for program in "${PROGRAMS[@]}"; do
+    local programs
+    read -ra programs <<< "$(get_programs)"
+
+    for program in "${programs[@]}"; do
         local program_dir="$DOTFILES_DIR/$program"
-        local install_script="$program_dir/install.sh"
 
-        if [ ! -d "$program_dir" ]; then
-            echo -e "  ${RED}✗${NC} ${YELLOW}$program${NC} - directory not found"
-            echo ""
-            continue
-        fi
+        load_module_links "$program_dir" 2>/dev/null || continue
+        local description="${DESCRIPTION:-No description available}"
 
-        # Get description
-        local description=$(get_program_description "$install_script")
-        if [ -z "$description" ]; then
-            description="No description available"
-        fi
+        local status
+        status=$(check_install_status "$program")
 
-        # Get installation status
-        local status=$(check_install_status "$program")
-        local status_icon=""
-        local status_text=""
-        local status_color=""
-
+        local status_icon status_text
         case "$status" in
         installed)
-            status_icon="${GREEN}✓${NC}"
-            status_text="${GREEN}installed${NC}"
-            ;;
+            status_icon="${GREEN}✓${NC}"; status_text="${GREEN}installed${NC}" ;;
         conflict)
-            status_icon="${YELLOW}⚠${NC}"
-            status_text="${YELLOW}conflict${NC}"
-            ;;
+            status_icon="${YELLOW}⚠${NC}"; status_text="${YELLOW}conflict${NC}" ;;
         not-installed)
-            status_icon="${BLUE}○${NC}"
-            status_text="${BLUE}not installed${NC}"
-            ;;
+            status_icon="${BLUE}○${NC}"; status_text="${BLUE}not installed${NC}" ;;
         *)
-            status_icon="${RED}?${NC}"
-            status_text="${RED}unknown${NC}"
-            ;;
+            status_icon="${RED}?${NC}"; status_text="${RED}unknown${NC}" ;;
         esac
 
-        # Print program info
         echo -e "  $status_icon ${YELLOW}$program${NC} [$status_text]"
-
-        # Print description (with proper indentation for multiline)
-        while IFS= read -r desc_line; do
-            echo -e "    $desc_line"
-        done <<<"$description"
-
+        echo -e "    $description"
         echo ""
     done
 }
@@ -183,39 +113,49 @@ install_program() {
         return 1
     fi
 
-    print_info "Installing $program..."
-
-    # Check if program has its own install script
     if [ -f "$program_dir/install.sh" ]; then
-        print_info "Running custom install script for $program"
         (cd "$program_dir" && bash install.sh)
     else
         print_warning "No install.sh found for $program, skipping"
         return 1
     fi
+}
 
-    return 0
+# Update all git submodules
+update_deps() {
+    if ! is_git_repo "$DOTFILES_DIR"; then
+        print_error "Not a git repository: $DOTFILES_DIR"
+        return 1
+    fi
+
+    print_info "Updating all git submodules..."
+    (cd "$DOTFILES_DIR" && git submodule update --init --recursive --remote)
+    print_success "All submodules updated!"
 }
 
 # Show usage information
 show_usage() {
+    local programs
+    read -ra programs <<< "$(get_programs)"
+
     cat <<EOF
 Usage: $0 [COMMAND|PROGRAM]
 
 Install dotfiles by creating symlinks to their respective locations.
 
 Commands:
-  --list, -l   Show available programs with status
-  --help, -h   Show this help message
+  --list, -l        Show available programs with status
+  --update-deps, -u Update all git submodules to latest
+  --help, -h        Show this help message
 
 Arguments:
-  PROGRAM      Optional. Specific program to install (${PROGRAMS[*]})
+  PROGRAM      Optional. Specific program to install (${programs[*]})
                If not provided, will install all programs.
 
 Examples:
   $0           # Install all programs
   $0 --list    # List available programs with status
-  $0 vim       # Install only vim
+  $0 -u        # Update all submodule dependencies
   $0 nvim      # Install only nvim
 
 EOF
@@ -229,24 +169,23 @@ main() {
     echo -e "${BLUE}╚════════════════════════════════════════╝${NC}"
     echo ""
 
-    # Check for help flag
-    if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
-        show_usage
-        exit 0
-    fi
+    case "$1" in
+    -h|--help) show_usage; exit 0 ;;
+    -l|--list) list_programs; exit 0 ;;
+    -u|--update-deps) update_deps; exit $? ;;
+    esac
 
-    # Check for list command
-    if [ "$1" = "--list" ] || [ "$1" = "-l" ]; then
-        list_programs
-        exit 0
-    fi
+    local programs
+    read -ra programs <<< "$(get_programs)"
 
-    # If a specific program is provided
     if [ -n "$1" ]; then
         local program="$1"
+        local found=false
+        for p in "${programs[@]}"; do
+            [ "$p" = "$program" ] && found=true && break
+        done
 
-        # Validate program name
-        if [[ ! " ${PROGRAMS[@]} " =~ " ${program} " ]]; then
+        if ! $found; then
             print_error "Unknown program: $program"
             echo ""
             show_usage
@@ -254,15 +193,13 @@ main() {
         fi
 
         install_program "$program"
-        exit_code=$?
-
+        local exit_code=$?
         echo ""
         if [ $exit_code -eq 0 ]; then
             print_success "Installation of $program completed!"
         else
             print_error "Installation of $program failed!"
         fi
-
         exit $exit_code
     fi
 
@@ -271,15 +208,13 @@ main() {
     echo ""
 
     local failed_programs=()
-
-    for program in "${PROGRAMS[@]}"; do
+    for program in "${programs[@]}"; do
         if ! install_program "$program"; then
             failed_programs+=("$program")
         fi
         echo ""
     done
 
-    # Summary
     echo -e "${BLUE}╔════════════════════════════════════════╗${NC}"
     echo -e "${BLUE}║          Installation Summary          ║${NC}"
     echo -e "${BLUE}╚════════════════════════════════════════╝${NC}"
@@ -296,8 +231,4 @@ main() {
     fi
 }
 
-# Export variables so they can be used by program-specific install scripts
-export DOTFILES_DIR
-
-# Run main function
 main "$@"

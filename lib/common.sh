@@ -96,6 +96,65 @@ create_symlink() {
     return 0
 }
 
+# Load module metadata from links.sh
+# Sets DESCRIPTION and LINKS in the calling scope
+load_module_links() {
+    local module_dir="$1"
+    local links_file="$module_dir/links.sh"
+
+    if [ ! -f "$links_file" ]; then
+        print_error "No links.sh found in $module_dir"
+        return 1
+    fi
+
+    DESCRIPTION=""
+    LINKS=()
+    source "$links_file"
+}
+
+# Install a module: read links.sh, init submodules, create all symlinks
+install_module() {
+    local module_dir="$1"
+
+    # Derive DOTFILES_DIR if not already set (standalone execution)
+    if [ -z "$DOTFILES_DIR" ]; then
+        DOTFILES_DIR="$(dirname "$module_dir")"
+    fi
+
+    load_module_links "$module_dir" || return 1
+
+    print_info "Installing ${DESCRIPTION}..."
+    init_submodules "$module_dir"
+
+    for entry in "${LINKS[@]}"; do
+        # Parse "source -> target" — trim surrounding whitespace from each part
+        local src target
+        src="$(echo "${entry%% ->*}" | xargs)"
+        target="$(echo "${entry##*-> }" | xargs)"
+
+        # Resolve source: "." means the module dir itself
+        local abs_src
+        if [ "$src" = "." ]; then
+            abs_src="$module_dir"
+        else
+            abs_src="$module_dir/$src"
+        fi
+
+        # Expand ~ in target
+        target="${target/#\~/$HOME}"
+
+        # Skip if source doesn't exist
+        if [ ! -e "$abs_src" ]; then
+            print_warning "Source not found, skipping: $abs_src"
+            continue
+        fi
+
+        create_symlink "$abs_src" "$target"
+    done
+
+    print_success "${DESCRIPTION} installation completed!"
+}
+
 # Check if directory is a git repository
 is_git_repo() {
     local dir="$1"
