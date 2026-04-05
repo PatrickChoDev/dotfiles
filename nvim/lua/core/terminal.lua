@@ -29,6 +29,7 @@ local function terminal_label_text(bufnr)
   end
   return string.format('Terminal %d', bufnr)
 end
+
 local function refresh_statusline()
   local ok, lualine = pcall(require, 'lualine')
   if ok and type(lualine.refresh) == 'function' then
@@ -83,7 +84,46 @@ local function job_is_running(job_id)
 end
 
 -- -----------------------------------------------------------------------------
--- Terminal registry
+-- Tmux detection & helpers
+-- -----------------------------------------------------------------------------
+
+function M.in_tmux()
+  return vim.env.TMUX ~= nil
+end
+
+-- Get the current working directory formatted for tmux
+local function tmux_cwd()
+  return get_terminal_root()
+end
+
+-- Open a new tmux split pane
+local function tmux_split(direction, opts)
+  local cwd = tmux_cwd()
+  if direction == 'vertical' then
+    vim.fn.system(string.format("tmux split-window -h -c '%s'", cwd))
+  else
+    local pct = (opts and opts.height_pct) or 30
+    vim.fn.system(string.format("tmux split-window -v -l %d%% -c '%s'", pct, cwd))
+  end
+end
+
+-- Open a terminal in a new tmux window
+local function tmux_new_window()
+  local cwd = tmux_cwd()
+  vim.fn.system(string.format("tmux new-window -c '%s'", cwd))
+end
+
+-- Toggle a tmux popup terminal (floating)
+local function tmux_toggle_popup()
+  local cwd = tmux_cwd()
+  vim.fn.system(string.format(
+    "tmux display-popup -E -d '%s' -w 80%% -h 80%%",
+    cwd
+  ))
+end
+
+-- -----------------------------------------------------------------------------
+-- Terminal registry (built-in terminal only)
 -- -----------------------------------------------------------------------------
 
 function TerminalRegistry.add(bufnr, direction)
@@ -154,7 +194,7 @@ local function focus_terminal_buffer(bufnr)
 
   vim.schedule(function()
     if vim.api.nvim_buf_is_valid(bufnr) then
-      vim.cmd('startinsert')
+      vim.cmd 'startinsert'
     end
   end)
 end
@@ -235,7 +275,7 @@ function M.setup()
       vim.schedule(function()
         if vim.api.nvim_buf_is_valid(event.buf) and vim.api.nvim_buf_get_option(event.buf, 'buftype') == 'terminal' then
           if vim.api.nvim_get_current_buf() == event.buf then
-            vim.cmd('startinsert')
+            vim.cmd 'startinsert'
           end
         end
       end)
@@ -247,7 +287,7 @@ function M.setup()
     callback = function(event)
       if vim.bo.buftype == 'terminal' then
         TerminalRegistry.refresh(event.buf or vim.api.nvim_get_current_buf())
-        vim.cmd('startinsert')
+        vim.cmd 'startinsert'
       end
     end,
   })
@@ -257,7 +297,7 @@ function M.setup()
       local mode = vim.api.nvim_get_mode().mode
       TerminalRegistry.refresh(vim.api.nvim_get_current_buf())
       if mode ~= 't' then
-        vim.cmd('startinsert')
+        vim.cmd 'startinsert'
       end
     end
   end
@@ -283,9 +323,11 @@ function M.setup()
       TerminalRegistry.remove(event.buf)
     end,
   })
-
-  -- Prompt on quit removed
 end
+
+-- -----------------------------------------------------------------------------
+-- Size adjustment (built-in terminal)
+-- -----------------------------------------------------------------------------
 
 local function adjust_split_size(direction, win, opts)
   if direction == 'horizontal' then
@@ -327,30 +369,86 @@ local function open_terminal_split(direction, opts)
   end
 end
 
+-- -----------------------------------------------------------------------------
+-- Public API
+-- -----------------------------------------------------------------------------
+
+--- Open a vertical terminal split.
+--- When in tmux: creates a tmux vertical pane.
+--- Otherwise: opens a built-in :terminal in a vsplit.
 function M.open_terminal_vsplit()
-  open_terminal_split 'vertical'
-end
-
-function M.open_terminal_hsplit(opts)
-  open_terminal_split('horizontal', opts)
-end
-
-local function matches_direction(info, direction)
-  if not direction then
-    return true
+  if M.in_tmux() then
+    tmux_split('vertical')
+  else
+    open_terminal_split 'vertical'
   end
-  return info.direction == direction
+end
+
+--- Open a horizontal terminal split.
+--- When in tmux: creates a tmux horizontal pane (default 30% height).
+--- Otherwise: opens a built-in :terminal in a split.
+function M.open_terminal_hsplit(opts)
+  if M.in_tmux() then
+    tmux_split('horizontal', { height_pct = (opts and opts.height_pct) or 30 })
+  else
+    open_terminal_split('horizontal', opts)
+  end
+end
+
+--- Open a terminal in a new tmux window.
+--- Falls back to a vertical split when not in tmux.
+function M.open_terminal_window()
+  if M.in_tmux() then
+    tmux_new_window()
+  else
+    open_terminal_split 'vertical'
+  end
+end
+
+--- Toggle a floating tmux popup terminal.
+--- When in tmux: shows/hides a display-popup.
+--- Otherwise: toggles the last horizontal built-in terminal.
+function M.toggle_terminal(direction, opts)
+  if M.in_tmux() then
+    tmux_toggle_popup()
+  else
+    direction = direction or 'horizontal'
+
+    local visible_win = nil
+    local hidden_bufnr = nil
+
+    for bufnr, info in pairs(active_terminals) do
+      if info.direction == direction and vim.api.nvim_buf_is_valid(bufnr) then
+        local win = vim.fn.bufwinid(bufnr)
+        if win ~= -1 and vim.api.nvim_win_is_valid(win) then
+          visible_win = win
+          break
+        else
+          hidden_bufnr = bufnr
+        end
+      end
+    end
+
+    if visible_win then
+      pcall(vim.api.nvim_win_close, visible_win, false)
+    elseif hidden_bufnr then
+      focus_terminal_buffer(hidden_bufnr)
+      local win = vim.fn.bufwinid(hidden_bufnr)
+      if win ~= -1 then
+        adjust_split_size(direction, win, opts)
+      end
+    else
+      open_terminal_split(direction, opts)
+    end
+  end
 end
 
 function M.count(direction)
   local total = 0
   for _, info in pairs(active_terminals) do
-    if matches_direction(info, direction) then
+    if not direction or info.direction == direction then
       total = total + 1
     end
-  end
-  if total == 0 then
-    return 0
   end
   return total
 end
@@ -368,7 +466,7 @@ function M.focus_terminal(bufnr)
 end
 
 local function format_terminal_entry(entry)
-  local icon = entry.running and '' or '󱂬'
+  local icon = entry.running and '' or '󱂬'
   local direction = entry.direction == 'vertical' and '[vsplit]' or entry.direction == 'horizontal' and '[hsplit]' or ''
   return string.format('%s %s %s', icon, entry.label, direction):gsub('%s%s+', ' ')
 end
@@ -404,47 +502,11 @@ local function telescope_pick_terminal(entries)
         focus_terminal_buffer(selection.bufnr)
       end
     end
-
     actions.select_default:replace(select)
     return true
   end)
 
   picker:find()
-end
-
-function M.toggle_terminal(direction, opts)
-  direction = direction or 'horizontal'
-
-  -- Find a terminal with the requested direction
-  local visible_win = nil
-  local hidden_bufnr = nil
-
-  for bufnr, info in pairs(active_terminals) do
-    if info.direction == direction and vim.api.nvim_buf_is_valid(bufnr) then
-      local win = vim.fn.bufwinid(bufnr)
-      if win ~= -1 and vim.api.nvim_win_is_valid(win) then
-        visible_win = win
-        break
-      else
-        hidden_bufnr = bufnr
-      end
-    end
-  end
-
-  if visible_win then
-    -- Hide: close the window, keep the buffer alive
-    pcall(vim.api.nvim_win_close, visible_win, false)
-  elseif hidden_bufnr then
-    -- Show: re-open the hidden terminal in a split
-    focus_terminal_buffer(hidden_bufnr)
-    local win = vim.fn.bufwinid(hidden_bufnr)
-    if win ~= -1 then
-      adjust_split_size(direction, win, opts)
-    end
-  else
-    -- Create: no terminal of this direction exists yet
-    open_terminal_split(direction, opts)
-  end
 end
 
 function M.pick_terminal()

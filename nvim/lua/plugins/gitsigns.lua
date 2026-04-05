@@ -1,8 +1,3 @@
--- Adds git related signs to the gutter, as well as utilities for managing changes
-return {
-  'lewis6991/gitsigns.nvim',
-  event = { 'BufReadPost', 'BufNewFile' },
-  opts = {
-    sign_priority = 100,
-  },
+require('gitsigns').setup {
+  sign_priority = 100,
 }

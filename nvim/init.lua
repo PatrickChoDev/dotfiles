@@ -6,40 +6,28 @@ require('core.title').setup() -- Keep window title in sync with project root
 require('core.terminal').setup() -- Terminal helpers
 require('core.scroll').setup() -- Dynamic scroll offsets
 
--- Set up the Lazy plugin manager
-local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
-  local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
-  local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
-  if vim.v.shell_error ~= 0 then
-    error('Error cloning lazy.nvim:\n' .. out)
-  end
-end
-vim.opt.rtp:prepend(lazypath)
+-- Install and load all plugins via vim.pack (Neovim 0.12 built-in)
+require 'pack'
 
--- Set up plugins
-require('lazy').setup {
-  require 'plugins.neotree',
-  require 'plugins.colortheme',
-  require 'plugins.lualine',
-  require 'plugins.treesitter',
-  require 'plugins.telescope',
-  require 'plugins.mason',
-  require 'plugins.lsp',
-  require 'plugins.autocompletion',
-  require 'plugins.debugger',
-  require 'plugins.gitsigns',
-  require 'plugins.alpha',
-  require 'plugins.indent-blankline',
-  require 'plugins.misc',
-  require 'plugins.comment',
-  require 'plugins.resession',
-  require 'plugins.noice',
-  require 'plugins.multi-cursor',
-  require 'plugins.conform',
-  require 'plugins.nvim-lint',
-  require 'plugins.winshift',
-}
-
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
+-- Configure plugins in dependency order
+require 'plugins.colortheme' -- theme must come first
+require 'plugins.noice' -- notifications early so other plugins can use them
+require 'plugins.treesitter'
+require 'plugins.telescope'
+require 'plugins.mason'
+require 'plugins.lsp'
+require 'plugins.autocompletion'
+require 'plugins.lualine'
+require 'plugins.neotree'
+require 'plugins.debugger'
+require 'plugins.gitsigns'
+require 'plugins.alpha'
+require 'plugins.indent-blankline'
+require 'plugins.misc'
+require 'plugins.comment'
+require 'plugins.resession'
+require 'plugins.multi-cursor'
+require 'plugins.conform'
+require 'plugins.nvim-lint'
+require 'plugins.winshift'
+require 'plugins.scope'

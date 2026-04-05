@@ -32,7 +32,7 @@ vim.o.whichwrap = 'bs<>[]hl' -- Which "horizontal" keys are allowed to travel to
 vim.o.numberwidth = 2 -- Set number column width to 2 {default 4} (default: 4)
 vim.o.swapfile = false -- Creates a swapfile (default: true)
 vim.o.smartindent = true -- Make indenting smarter again (default: false)
-vim.o.showtabline = 2 -- Always show tabs (default: 1)
+vim.o.showtabline = 0 -- Tabline disabled; tmux handles tabs
 vim.o.backspace = 'indent,eol,start' -- Allow backspace on (default: 'indent,eol,start')
 vim.o.pumheight = 10 -- Pop up menu height (default: 0)
 vim.o.conceallevel = 0 -- So that `` is visible in markdown files (default: 1)
@@ -60,4 +60,25 @@ vim.o.autoread = true
 vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter' }, {
   command = "if mode() != 'c' | checktime | endif",
   pattern = '*',
+})
+
+-- Re-assert global statusline on resize and force a full redraw.
+-- Prevents the bottom statusline from drifting upward when resizing windows.
+vim.api.nvim_create_autocmd('VimResized', {
+  callback = function()
+    vim.o.laststatus = 3
+    vim.cmd 'redraw!'
+  end,
+})
+
+-- Visual focus feedback: dim cursorline when Neovim loses focus (tmux pane switch).
+vim.api.nvim_create_autocmd('FocusLost', {
+  callback = function()
+    vim.opt_local.cursorline = false
+  end,
+})
+vim.api.nvim_create_autocmd('FocusGained', {
+  callback = function()
+    vim.opt_local.cursorline = true
+  end,
 })
