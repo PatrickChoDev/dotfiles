@@ -1,4 +1,4 @@
-export WORDCHARS='~!#$%^&*(){}[]<>?.+;-'
+export WORDCHARS='~!#$%^&*(){}[]<>?.+;-_:|@,'
 
 # macOS-only env
 if (( IS_MACOS )); then

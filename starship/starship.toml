@@ -1,0 +1,47 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = true
+scan_timeout = 10
+command_timeout = 100
+
+[character]
+success_symbol = '[➜](bold green)'
+error_symbol = '[✗](bold red)'
+vimcmd_symbol = '[N](bold purple)'
+vimcmd_replace_one_symbol = '[R](bold yellow)'
+vimcmd_replace_symbol = '[R](bold yellow)'
+vimcmd_visual_symbol = '[V](bold blue)'
+
+[directory]
+truncation_length = 5
+format = '[$read_only ]($read_only_style)[$path]($style) '
+
+[gcloud]
+symbol = '️[](bold blue) '
+format = '[$symbol$active]($style) '
+style = 'bold yellow'
+disabled = true
+
+[gcloud.region_aliases]
+us-central1 = 'uc1'
+asia-northeast1 = 'an1'
+
+[git_branch]
+symbol = '🌱 '
+
+[git_metrics]
+disabled = true
+format = '[+$added]($added_style)[-$deleted]($deleted_style) '
+only_nonzero_diffs = true
+
+[git_status]
+format = "([$all_status$ahead_behind]($style) )"
+
+[docker_context]
+disabled = true
+
+[hostname]
+ssh_only = false
+aliases = { "patrickchodevmacbook.local" = "macbook" }
+detect_env_vars = ['!TMUX', 'SSH_CONNECTION']
+disabled = true

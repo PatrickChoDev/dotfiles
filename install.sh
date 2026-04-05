@@ -12,7 +12,7 @@ source "$DOTFILES_DIR/lib/common.sh"
 export BACKUP_TIMESTAMP
 
 # List of available programs
-PROGRAMS=("vim" "nvim" "ghostty" "zsh" "mise")
+PROGRAMS=("vim" "nvim" "ghostty" "zsh" "mise" "tmux" "starship")
 
 # Extract description from install script header
 get_program_description() {
@@ -67,6 +67,14 @@ check_install_status() {
     mise)
         local targets=("$HOME/.config/mise/config.toml")
         local sources=("$program_dir/config.toml")
+        ;;
+    tmux)
+        local targets=("$HOME/.tmux.conf" "$HOME/.tmux/plugins")
+        local sources=("$program_dir/tmux.conf" "$program_dir/plugins")
+        ;;
+    starship)
+        local targets=("$HOME/.config/starship.toml")
+        local source=("$program_dir/starship/starship.toml")
         ;;
     *)
         echo "unknown"
