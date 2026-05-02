@@ -12,8 +12,15 @@ vim.keymap.set('n', '<leader>dB', function()
 end, { desc = 'Debug: Set Breakpoint condition' })
 vim.keymap.set('n', '<F7>', function() require('dapui').toggle() end, { desc = 'Debug: See last session result.' })
 vim.keymap.set('n', '<leader>du', function() require('dapui').toggle() end, { desc = '[D]ebug [U]I toggle' })
-vim.keymap.set('n', '<leader>dc', function() require('dap').terminate() end, { desc = '[D]ebug [C]lose/terminate session' })
-vim.keymap.set('n', '<leader>dr', function() require('dap').run_last() end, { desc = '[D]ebug [R]un last' })
+vim.keymap.set('n', '<leader>dc', function() require('dap').continue() end, { desc = '[D]ebug [C]ontinue' })
+vim.keymap.set('n', '<leader>ds', function() require('dap').step_over() end, { desc = '[D]ebug [S]tep over' })
+vim.keymap.set('n', '<leader>di', function() require('dap').step_into() end, { desc = '[D]ebug step [I]nto' })
+vim.keymap.set('n', '<leader>do', function() require('dap').step_out() end, { desc = '[D]ebug step [O]ut' })
+vim.keymap.set('n', '<leader>dR', function() require('dap').restart() end, { desc = '[D]ebug [R]estart' })
+vim.keymap.set('n', '<leader>dq', function() require('dap').terminate() end, { desc = '[D]ebug [Q]uit/terminate' })
+vim.keymap.set('n', '<leader>dr', function() require('dap').run_last() end, { desc = '[D]ebug [r]un last' })
+vim.keymap.set('n', '<leader>de', function() require('dapui').eval() end, { desc = '[D]ebug [E]val expression' })
+vim.keymap.set('v', '<leader>de', function() require('dapui').eval() end, { desc = '[D]ebug [E]val selection' })
 
 require('mason-nvim-dap').setup {
   automatic_installation = true,

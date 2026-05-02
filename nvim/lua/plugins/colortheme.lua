@@ -23,3 +23,16 @@ require('catppuccin').setup {
   },
 }
 vim.cmd.colorscheme 'catppuccin-nvim'
+
+-- Auto-switch between latte (light) and mocha (dark) when macOS appearance changes.
+require('auto-dark-mode').setup {
+  set_dark_mode = function()
+    vim.o.background = 'dark'
+    vim.cmd.colorscheme 'catppuccin-nvim'
+  end,
+  set_light_mode = function()
+    vim.o.background = 'light'
+    vim.cmd.colorscheme 'catppuccin-nvim'
+  end,
+  update_interval = 3000, -- poll every 3 s
+}

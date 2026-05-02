@@ -25,3 +25,6 @@
 [submodule "tmux/plugins/tmux-cpu"]
 	path = tmux/plugins/tmux-cpu
 	url = https://github.com/tmux-plugins/tmux-cpu
+[submodule "tmux/plugins/tmux-fzf-url"]
+	path = tmux/plugins/tmux-fzf-url
+	url = https://github.com/wfxr/tmux-fzf-url

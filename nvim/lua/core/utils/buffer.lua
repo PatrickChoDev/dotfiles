@@ -108,16 +108,16 @@ function M.smart_close_buffer()
     end
 
     if switched and vim.api.nvim_buf_is_valid(current_buf) and current_buf ~= vim.api.nvim_get_current_buf() then
-      vim.cmd('bdelete! ' .. current_buf)
+      pcall(vim.cmd, 'bdelete! ' .. current_buf)
     end
   else
     -- If only one buffer, create new before deleting
     if total_buffers <= 1 then
       vim.cmd 'enew'
       if vim.api.nvim_buf_is_valid(current_buf) and current_buf ~= vim.api.nvim_get_current_buf() then
-        vim.cmd('bdelete! ' .. current_buf)
+        pcall(vim.cmd, 'bdelete! ' .. current_buf)
       elseif vim.api.nvim_buf_is_valid(current_buf) then
-        vim.cmd('bdelete! ' .. current_buf)
+        pcall(vim.cmd, 'bdelete! ' .. current_buf)
       end
       return
     end
@@ -132,7 +132,7 @@ function M.smart_close_buffer()
     end
 
     if switched and vim.api.nvim_buf_is_valid(current_buf) and current_buf ~= vim.api.nvim_get_current_buf() then
-      vim.cmd('bdelete! ' .. current_buf)
+      pcall(vim.cmd, 'bdelete! ' .. current_buf)
     end
   end
 end

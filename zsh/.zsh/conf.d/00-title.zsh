@@ -28,26 +28,9 @@ function _win_title_format(){
 }
 
 
-_win_title_cmd_start=0
-_win_title_last_cmd=""
-
-function set_win_title_cmd(){
-    _win_title_cmd_start=$EPOCHREALTIME
-    _win_title_last_cmd="${1%% *}"
-}
-
 function set_win_title(){
     local full_path="$(pwd)"
     local dir=""
-    local suffix=""
-
-    if (( _win_title_cmd_start > 0 )); then
-        local elapsed=$(( EPOCHREALTIME - _win_title_cmd_start ))
-        _win_title_cmd_start=0
-        if (( elapsed >= 0.1 )); then
-            suffix=" [$_win_title_last_cmd ${elapsed%.*}s]"
-        fi
-    fi
 
     local git_root
     git_root=$(git rev-parse --show-toplevel 2>/dev/null)
@@ -77,10 +60,9 @@ function set_win_title(){
         dir=$(_win_title_format "$full_path" "" "${(@)parts}")
     fi
 
-    echo -ne "\033]0; ${dir}${suffix} \007"
+    echo -ne "\033]0; ${dir} \007"
 }
 
-preexec_functions+=(set_win_title_cmd)
 precmd_functions+=(set_win_title)
 
 

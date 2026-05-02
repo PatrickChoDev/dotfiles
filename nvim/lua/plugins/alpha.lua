@@ -32,9 +32,14 @@ local date_section = {
   opts = { position = 'center', hl = 'EcovimHeaderInfo' },
 }
 
--- Update date every second after startup
+-- Update date every second, but only while alpha is the active buffer
 local timer = vim.loop.new_timer()
 local function update_date()
+  local buf = vim.api.nvim_get_current_buf()
+  if vim.bo[buf].filetype ~= 'alpha' then
+    timer:stop()
+    return
+  end
   date_section.val = '󰸗 ' .. os.date '%Y-%m-%d %H:%M:%S'
   pcall(vim.cmd.AlphaRedraw)
 end

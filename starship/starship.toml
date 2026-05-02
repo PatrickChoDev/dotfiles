@@ -1,8 +1,8 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 add_newline = true
-scan_timeout = 10
-command_timeout = 100
+scan_timeout = 30
+command_timeout = 500
 
 [character]
 success_symbol = '[➜](bold green)'
@@ -36,6 +36,28 @@ only_nonzero_diffs = true
 
 [git_status]
 format = "([$all_status$ahead_behind]($style) )"
+
+[mise]
+disabled = false
+
+# Individual language modules replaced by [mise] above — one lookup instead of many subprocesses
+[nodejs]
+disabled = true
+
+[python]
+disabled = true
+
+[rust]
+disabled = true
+
+[golang]
+disabled = true
+
+[ruby]
+disabled = true
+
+[java]
+disabled = true
 
 [docker_context]
 disabled = true

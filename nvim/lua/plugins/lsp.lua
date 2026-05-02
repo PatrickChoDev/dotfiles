@@ -50,11 +50,29 @@ vim.api.nvim_create_autocmd('LspAttach', {
       vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = desc })
     end
 
+    map('K', vim.lsp.buf.hover, 'Hover documentation')
     map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
     map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
     map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
     map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
     map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
+    map('<leader>cp', function()
+      -- Peek definition: open definition in a floating preview
+      local params = vim.lsp.util.make_position_params()
+      vim.lsp.buf_request(event.buf, 'textDocument/definition', params, function(_, result)
+        if not result or vim.tbl_isempty(result) then return end
+        local loc = vim.islist(result) and result[1] or result
+        local uri = loc.uri or loc.targetUri
+        local range = loc.range or loc.targetSelectionRange
+        local bufnr = vim.uri_to_bufnr(uri)
+        vim.fn.bufload(bufnr)
+        local lines = vim.api.nvim_buf_get_lines(bufnr, math.max(0, range.start.line - 3), range.start.line + 10, false)
+        vim.lsp.util.open_floating_preview(lines, vim.filetype.match { buf = bufnr } or '', {
+          border = 'single',
+          max_width = 80,
+        })
+      end)
+    end, '[C]ode [P]eek definition')
     map('<leader>cr', vim.lsp.buf.rename, '[C]ode [R]ename')
     map('<leader>cf', function() vim.lsp.buf.format { async = true } end, '[C]ode [F]ormat')
     map('<leader>ct', require('telescope.builtin').lsp_type_definitions, '[C]ode [T]ype definition')
@@ -103,7 +121,7 @@ require('mason-lspconfig').setup {
 require('mason-tool-installer').setup {
   ensure_installed = {
     'stylua', 'prettier', 'black', 'isort', 'shfmt', 'taplo',
-    'ruff', 'eslint_d', 'hadolint', 'clang-format',
+    'ruff', 'eslint_d', 'hadolint', 'clang-format', 'shellcheck',
   },
 }
 
@@ -139,8 +157,7 @@ vim.lsp.config('rust_analyzer', {
   },
 })
 
-vim.lsp.handlers['textDocument/publishDiagnostics'] =
-  vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, { update_in_insert = true })
+-- update_in_insert is already set in vim.diagnostic.config above
 
 -- LSP toggle keymaps (set lazily once commands are registered)
 vim.api.nvim_create_autocmd('User', {

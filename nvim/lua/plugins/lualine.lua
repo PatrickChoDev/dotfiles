@@ -1,15 +1,6 @@
 local smooth_buffers = require 'core.statusline.buffers'
 smooth_buffers.setup()
 
-local filetype_names = {
-  TelescopePrompt = 'Telescope',
-  ['neo-tree'] = '',
-  ['neo-tree-popup'] = 'NeoTree',
-  ['fugitive'] = 'Git',
-  ['fugitiveblame'] = 'Blame',
-  ['netrw'] = 'netrw',
-}
-
 local mode = {
   'mode',
   fmt = function(str)
@@ -39,18 +30,26 @@ local diff = {
   cond = hide_in_width,
 }
 
-local filename = {
-  'filename',
-  file_status = true,
-  path = 1,
-}
-
 local session_name = {
   function()
     local ok, resession = pcall(require, 'resession')
-    if not ok then return '' end
+    if not ok then
+      return ''
+    end
     local name = resession.get_current()
-    return name and (' ' .. name) or ''
+    if not name then
+      return ''
+    end
+    -- Show only the last path component (git root / project name)
+    local short = vim.fn.fnamemodify(name, ':t')
+    if short == '' then
+      short = name
+    end
+    -- Truncate to 20 chars
+    if #short > 20 then
+      short = short:sub(1, 19) .. '…'
+    end
+    return '󰆓 ' .. short
   end,
 }
 
@@ -71,8 +70,20 @@ require('lualine').setup {
     section_separators = { left = '', right = '' },
     component_separators = { left = '', right = '' },
     disabled_filetypes = {
-      statusline = { 'alpha', 'neo-tree', 'TelescopePrompt', 'mason', 'notify', 'fugitive', 'fugitiveblame' },
-      winbar = { 'alpha', 'neo-tree', 'TelescopePrompt', 'mason', 'notify', 'fugitive', 'fugitiveblame', 'dap-repl', 'dapui_watches', 'dapui_stacks', 'dapui_breakpoints', 'dapui_scopes', 'dapui_console' },
+      statusline = { 'alpha', 'neo-tree', 'TelescopePrompt', 'mason', 'notify' },
+      winbar = {
+        'alpha',
+        'neo-tree',
+        'TelescopePrompt',
+        'mason',
+        'notify',
+        'dap-repl',
+        'dapui_watches',
+        'dapui_stacks',
+        'dapui_breakpoints',
+        'dapui_scopes',
+        'dapui_console',
+      },
     },
     always_divide_middle = true,
   },
@@ -132,7 +143,7 @@ require('lualine').setup {
     lualine_y = {},
     lualine_z = {},
   },
-  extensions = { 'fugitive', 'neo-tree', 'nvim-dap-ui', 'quickfix', 'fzf', 'mason' },
+  extensions = { 'neo-tree', 'nvim-dap-ui', 'quickfix', 'fzf', 'mason' },
 }
 
 -- Re-assert global statusline after lualine setup (prevents drift on resize)

@@ -1,12 +1,16 @@
 require('blink.cmp').setup {
   keymap = {
-    -- Tab: open menu when hidden, cycle to next item when visible
-    -- Falls back to normal Tab (indent) when menu is not active
+    -- Tab: cycle next when menu visible; open menu only when cursor follows a
+    -- non-whitespace character (i.e. mid-word). At line start or after spaces
+    -- the function returns nil → 'fallback' inserts a real tab / indent.
     ['<Tab>'] = {
       function(cmp)
         if cmp.is_visible() then
           return cmp.select_next()
-        else
+        end
+        local col = vim.fn.col '.' - 1
+        local before = vim.api.nvim_get_current_line():sub(1, col)
+        if col > 0 and not before:match '%s$' then
           return cmp.show()
         end
       end,
@@ -14,7 +18,9 @@ require('blink.cmp').setup {
     },
     ['<S-Tab>'] = {
       function(cmp)
-        if cmp.is_visible() then return cmp.select_prev() end
+        if cmp.is_visible() then
+          return cmp.select_prev()
+        end
       end,
       'fallback',
     },

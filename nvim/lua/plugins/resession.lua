@@ -82,5 +82,8 @@ vim.keymap.set('n', '<leader>pr', function()
   resession.load(vim.fn.getcwd())
 end, { desc = 'Restore session' })
 vim.keymap.set('n', '<leader>pd', function()
-  resession.delete(vim.fn.getcwd())
+  local ok, err = pcall(resession.delete, vim.fn.getcwd())
+  if not ok then
+    vim.notify('No session for this directory', vim.log.levels.WARN)
+  end
 end, { desc = 'Delete session' })

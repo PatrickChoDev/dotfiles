@@ -5,5 +5,5 @@ add-zsh-hook preexec mise_lazy_init
 
 mise_lazy_init() {
   eval "$(mise activate zsh)"
-  remove-zsh-hook preexec mise_lazy_init
+  add-zsh-hook -d preexec mise_lazy_init
 }

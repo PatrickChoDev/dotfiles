@@ -26,10 +26,4 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
--- Treesitter-based folding.
--- foldlevel=99 means all folds start open; use zM to fold all, zR to open all.
-vim.opt.foldmethod = 'expr'
-vim.opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
-vim.opt.foldlevel = 99
-vim.opt.foldlevelstart = 99
-vim.opt.foldnestmax = 4
+-- Folding is handled by nvim-ufo (plugins/folding.lua).

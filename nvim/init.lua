@@ -11,7 +11,7 @@ require 'pack'
 
 -- Configure plugins in dependency order
 require 'plugins.colortheme' -- theme must come first
-require 'plugins.noice' -- notifications early so other plugins can use them
+require 'plugins.notify' -- notifications early so other plugins can use them
 require 'plugins.treesitter'
 require 'plugins.telescope'
 require 'plugins.mason'
@@ -21,6 +21,7 @@ require 'plugins.lualine'
 require 'plugins.neotree'
 require 'plugins.debugger'
 require 'plugins.gitsigns'
+require 'plugins.git'
 require 'plugins.alpha'
 require 'plugins.indent-blankline'
 require 'plugins.misc'
@@ -31,3 +32,5 @@ require 'plugins.conform'
 require 'plugins.nvim-lint'
 require 'plugins.winshift'
 require 'plugins.scope'
+require 'plugins.folding'
+require 'plugins.ide' -- trouble, fidget, illuminate, which-key

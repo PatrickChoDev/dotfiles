@@ -134,7 +134,7 @@ function M.smart_close_window()
       vim.cmd('bdelete! ' .. current_buf)
     end
   else
-    vim.cmd 'close'
+    pcall(vim.cmd, 'close')
   end
 end
 

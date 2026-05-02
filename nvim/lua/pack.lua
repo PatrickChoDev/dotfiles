@@ -23,6 +23,7 @@ vim.api.nvim_create_autocmd('PackChanged', {
 vim.pack.add({
   -- Theme (load first — priority plugin)
   { src = gh 'catppuccin/nvim', name = 'catppuccin' },
+  gh 'f-person/auto-dark-mode.nvim',
 
   -- Icons & UI dependencies
   gh 'nvim-tree/nvim-web-devicons',
@@ -41,7 +42,7 @@ vim.pack.add({
   gh 'nvim-lualine/lualine.nvim',
 
   -- Syntax / Treesitter
-  {src = gh 'nvim-treesitter/nvim-treesitter', version = "main"},
+  { src = gh 'nvim-treesitter/nvim-treesitter', version = 'main' },
 
   -- Fuzzy finder
   { src = gh 'nvim-telescope/telescope.nvim', version = 'master' },
@@ -71,8 +72,8 @@ vim.pack.add({
 
   -- Git
   gh 'lewis6991/gitsigns.nvim',
-  gh 'tpope/vim-fugitive',
-  gh 'tpope/vim-rhubarb',
+  gh 'NeogitOrg/neogit',
+  gh 'sindrets/diffview.nvim',
 
   -- Dashboard
   gh 'goolord/alpha-nvim',
@@ -87,7 +88,7 @@ vim.pack.add({
   gh 'windwp/nvim-autopairs',
   gh 'folke/todo-comments.nvim',
   gh 'folke/zen-mode.nvim',
-  { src = gh 'norcalli/nvim-colorizer.lua', name = 'nvim-colorizer' },
+  { src = gh 'catgoose/nvim-colorizer.lua', name = 'nvim-colorizer' },
 
   -- Comments
   gh 'numToStr/Comment.nvim',
@@ -97,9 +98,6 @@ vim.pack.add({
   gh 'axkirillov/hbac.nvim',
   gh 'tiagovla/scope.nvim',
 
-  -- Command UI
-  gh 'folke/noice.nvim',
-
   -- Multi-cursor
   { src = gh 'mg979/vim-visual-multi', version = 'master' },
 
@@ -107,6 +105,19 @@ vim.pack.add({
   gh 'stevearc/conform.nvim',
   gh 'mfussenegger/nvim-lint',
 
+  -- Folding
+  gh 'kevinhwang91/promise-async',
+  gh 'kevinhwang91/nvim-ufo',
+
   -- Window management
   gh 'sindrets/winshift.nvim',
+
+  -- Diagnostics list panel
+  gh 'folke/trouble.nvim',
+
+  -- LSP progress spinner (replaces noisy noice LSP progress messages)
+  gh 'j-hui/fidget.nvim',
+
+  -- Highlight all references of the word under cursor
+  gh 'RRethy/vim-illuminate',
 }, { load = true })
