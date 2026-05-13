@@ -19,8 +19,8 @@
 [submodule "zsh/.zsh/plugins/zsh-history-substring-search"]
 	path = zsh/.zsh/plugins/zsh-history-substring-search
 	url = https://github.com/zsh-users/zsh-history-substring-search
-[submodule "tmux/tmux/plugins/catppuccin"]
-	path = tmux/tmux/plugins/catppuccin
+[submodule "tmux/plugins/catppuccin"]
+	path = tmux/plugins/catppuccin
 	url = https://github.com/catppuccin/tmux.git
 [submodule "tmux/plugins/tmux-cpu"]
 	path = tmux/plugins/tmux-cpu
