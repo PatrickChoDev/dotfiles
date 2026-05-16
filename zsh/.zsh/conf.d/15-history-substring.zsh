@@ -7,20 +7,27 @@ bindkey '^[[B' history-substring-search-down
 
 bindkey '^R' fzf-history-widget
 
-# === Ctrl+R scoped to current input (e.g., 'docker') ===
 fzf-history-widget() {
   local query="${BUFFER}"
-  local grep_pat="${query:-.}"
-  BUFFER=$(fc -rl 1 | sed 's/^[[:space:]]*[0-9]*[[:space:]]*//' | grep -i "$grep_pat" | fzf \
-    --tac \
-    --no-sort \
-    --height 40% \
-    --layout=reverse \
-    --prompt='history> ' \
-    --query="$query" \
-    --ansi) || return
-  CURSOR=$#BUFFER
-  zle redisplay
+  fc -R
+  local selected
+  selected=$(fc -rl 1 \
+    | sed 's/^[[:space:]]*[0-9]*[[:space:]]*//' \
+    | sed 's/\\n.*//' \
+    | awk 'length($0) <= 200 && !seen[$0]++' \
+    | fzf \
+      --no-sort \
+      --scheme=history \
+      --height 40% \
+      --layout=reverse \
+      --prompt='history> ' \
+      --query="$query" \
+      --ansi)
+  if [[ -n "$selected" ]]; then
+    BUFFER="$selected"
+    CURSOR=$#BUFFER
+  fi
+  zle reset-prompt
 }
 zle -N fzf-history-widget
 

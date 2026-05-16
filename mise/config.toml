@@ -18,6 +18,7 @@ bun = "latest"
 mysql = "latest"
 aws-cli = { version = "latest", symlink_bins = "true" }
 claude = "latest"
+mc = "latest"
 
 [settings]
 idiomatic_version_file = true
