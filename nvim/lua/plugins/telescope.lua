@@ -1,3 +1,5 @@
+local builtin = require 'telescope.builtin'
+
 -- rg-based find_files: respects .gitignore by default, toggle with C-h inside picker
 local rg_find_cmd = { 'rg', '--files', '--hidden', '--glob', '!.git' }
 local rg_find_cmd_no_ignore = { 'rg', '--files', '--hidden', '--no-ignore', '--glob', '!.git' }
@@ -27,8 +29,16 @@ require('telescope').setup {
     },
     -- respects .gitignore; add --no-ignore to override
     vimgrep_arguments = {
-      'rg', '--color=never', '--no-heading', '--with-filename',
-      '--line-number', '--column', '--smart-case', '--hidden', '--glob', '!.git',
+      'rg',
+      '--color=never',
+      '--no-heading',
+      '--with-filename',
+      '--line-number',
+      '--column',
+      '--smart-case',
+      '--hidden',
+      '--glob',
+      '!.git',
     },
   },
   pickers = {
@@ -50,11 +60,13 @@ require('telescope').setup {
 pcall(require('telescope').load_extension, 'fzf')
 pcall(require('telescope').load_extension, 'ui-select')
 
-local builtin = require 'telescope.builtin'
-
 -- File finding (C-h inside picker toggles .gitignore)
-vim.keymap.set('n', '<leader><space>', function() find_files_with_toggle(false) end, { desc = 'Find files' })
-vim.keymap.set('n', '<leader>ff', function() find_files_with_toggle(false) end, { desc = '[F]ind [F]iles' })
+vim.keymap.set('n', '<leader><space>', function()
+  find_files_with_toggle(false)
+end, { desc = 'Find files' })
+vim.keymap.set('n', '<leader>ff', function()
+  find_files_with_toggle(false)
+end, { desc = '[F]ind [F]iles' })
 vim.keymap.set('n', '<leader>fr', builtin.oldfiles, { desc = '[F]ile [R]ecent' })
 vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = '[F]ind [B]uffers' })
 
