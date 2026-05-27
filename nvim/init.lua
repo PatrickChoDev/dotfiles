@@ -4,7 +4,7 @@ require 'core.snippets' -- Custom code snippets
 require 'core.autosave' -- Auto save helpers
 require('core.title').setup() -- Keep window title in sync with project root
 require('core.terminal').setup() -- Terminal helpers
-require('core.scroll').setup() -- Dynamic scroll offsets
+-- require('core.scroll').setup() -- Dynamic scroll offsets
 
 -- Install and load all plugins via vim.pack (Neovim 0.12 built-in)
 require 'pack'

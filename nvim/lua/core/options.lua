@@ -7,8 +7,8 @@ vim.o.wrap = false -- Display lines as one long line (default: true)
 vim.o.linebreak = true -- Companion to wrap, don't split words (default: false)
 vim.o.mouse = 'a' -- Enable mouse mode (default: '')
 vim.o.sidescroll = 1 -- The minimal number of columns to scroll horizontally (default: 0)
-vim.o.scrolloff = 4 -- Keep 4 lines visible below cursor before scrolling (default: 0)
-vim.o.sidescrolloff = 12 -- Keep cursor horizontally centered when possible (default: 0)
+vim.o.scrolloff = 8 -- Keep 4 lines visible below cursor before scrolling (default: 0)
+vim.o.sidescrolloff = 8 -- Keep cursor horizontally centered when possible (default: 0)
 vim.o.autoindent = true -- Copy indent from current line when starting new one (default: true)
 vim.o.ignorecase = true -- Case-insensitive searching UNLESS \C or capital in search (default: false)
 vim.o.smartcase = true -- Smart case (default: false)
@@ -24,9 +24,9 @@ vim.o.incsearch = true -- Show search matches as you type (default: true)
 vim.o.showmode = false -- We don't need to see things like -- INSERT -- anymore (default: true)
 vim.opt.termguicolors = true -- Set termguicolors to enable highlight groups (default: false)
 vim.opt.guicursor = table.concat({
-  'n-v-c-o:block',   -- normal / visual / command / operator-pending: block
-  'i-ci-ve:ver25',   -- insert / command-insert / visual-replace: thin bar
-  'r-cr-sm:hor20',   -- replace / command-replace / showmatch: underline
+  'n-v-c-o:block', -- normal / visual / command / operator-pending: block
+  'i-ci-ve:ver25', -- insert / command-insert / visual-replace: thin bar
+  'r-cr-sm:hor20', -- replace / command-replace / showmatch: underline
   'a:Cursor/lCursor', -- highlight group applied to all modes uniformly
   'a:blinkwait700-blinkoff400-blinkon250', -- consistent blink across modes
 }, ',')
