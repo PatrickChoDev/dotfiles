@@ -24,6 +24,9 @@ function M.setup()
 
   -- Window management
   vim.keymap.set('n', '<leader>wc', window_utils.smart_close_window, { noremap = true, silent = true, desc = '[W]indow [C]lose' })
+  vim.keymap.set('n', '<leader>wca', window_utils.close_all_windows, { noremap = true, silent = true, desc = '[W]indow [C]lose [A]ll' })
+  vim.keymap.set('n', '<leader>wco', window_utils.close_other_windows, { noremap = true, silent = true, desc = '[W]indow [C]lose [O]thers' })
+  vim.keymap.set('n', '<leader>wcu', window_utils.close_unmodified_windows, { noremap = true, silent = true, desc = '[W]indow [C]lose [U]nmodified' })
   vim.keymap.set('n', '<leader>we', window_utils.equalize_windows, { noremap = true, silent = true, desc = '[W]indow [E]qualize' })
   vim.keymap.set('n', '<leader>w=', window_utils.equalize_windows, { noremap = true, silent = true, desc = '[W]indow = (equalize)' })
 

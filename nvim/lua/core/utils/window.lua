@@ -280,4 +280,31 @@ function M.equalize_windows()
   end
 end
 
+-- Close all windows (including current), leaving a single empty buffer
+function M.close_all_windows()
+  vim.cmd 'enew | only'
+end
+
+-- Close all windows except the current one
+function M.close_other_windows()
+  local current = vim.api.nvim_get_current_win()
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    if win ~= current and not M.is_neotree_window(win) then
+      pcall(vim.api.nvim_win_close, win, false)
+    end
+  end
+end
+
+-- Close all windows whose buffer is unmodified
+function M.close_unmodified_windows()
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    if not M.is_neotree_window(win) then
+      local buf = vim.api.nvim_win_get_buf(win)
+      if not vim.bo[buf].modified then
+        pcall(vim.api.nvim_win_close, win, false)
+      end
+    end
+  end
+end
+
 return M

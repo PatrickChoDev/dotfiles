@@ -12,13 +12,13 @@ python = "3.13"
 ruby = "latest"
 typst = "latest"
 uv = "latest"
-vault = "latest"
 elixir = "latest"
 bun = "latest"
 mysql = "latest"
 aws-cli = { version = "latest", symlink_bins = "true" }
 claude = "latest"
 mc = "latest"
+zig = "latest"
 
 [settings]
 idiomatic_version_file = true

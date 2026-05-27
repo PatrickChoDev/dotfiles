@@ -214,4 +214,31 @@ function M.previous_buffer(opts)
   cycle_buffer('previous', opts)
 end
 
+-- Close all buffers, leaving one empty buffer
+function M.close_all_buffers()
+  for _, buf in ipairs(vim.fn.getbufinfo { buflisted = 1 }) do
+    pcall(vim.cmd, 'bdelete! ' .. buf.bufnr)
+  end
+  vim.cmd 'enew'
+end
+
+-- Close all listed buffers except the current one
+function M.close_other_buffers()
+  local current = vim.api.nvim_get_current_buf()
+  for _, buf in ipairs(vim.fn.getbufinfo { buflisted = 1 }) do
+    if buf.bufnr ~= current then
+      pcall(vim.cmd, 'bdelete! ' .. buf.bufnr)
+    end
+  end
+end
+
+-- Close all listed buffers whose content is unmodified
+function M.close_unmodified_buffers()
+  for _, buf in ipairs(vim.fn.getbufinfo { buflisted = 1 }) do
+    if not vim.bo[buf.bufnr].modified then
+      pcall(vim.cmd, 'bdelete ' .. buf.bufnr)
+    end
+  end
+end
+
 return M

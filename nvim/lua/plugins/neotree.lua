@@ -14,7 +14,7 @@ vim.keymap.set('n', '<leader>ee', neotree_toggle, { desc = '[E]xplorer visibilit
 vim.keymap.set('n', '<leader>ef', neotree_reveal, { desc = '[E]xplorer [F]ind current file' })
 vim.keymap.set('n', '<leader>er', neotree_reveal, { desc = '[E]xplorer [R]eveal current file' })
 vim.keymap.set('n', '<leader>gs', ':Neotree float git_status<CR>', { desc = '[G]it [S]tatus' })
-vim.keymap.set('n', '\\', neotree_toggle_focus, { desc = 'Focus Neo-tree / previous buffer' })
+vim.keymap.set('n', '\\', neotree_toggle, { desc = 'Focus Neo-tree / previous buffer' })
 vim.keymap.set('n', '<leader>ngs', ':Neotree float git_status<CR>', { desc = 'Neo-tree git status' })
 
 require('window-picker').setup {
