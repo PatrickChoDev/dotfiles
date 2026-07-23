@@ -5,8 +5,8 @@ export ZSH_HOME="$HOME/.zsh"
 [[ "$OSTYPE" == darwin* ]] && IS_MACOS=1 || IS_MACOS=0
 
 # === Locale ===
-export LANG="en_US.UTF-8"
-export LC_ALL="en_US.UTF-8"
+# LANG is a fallback; do not force LC_ALL for every zsh process.
+export LANG="${LANG:-en_US.UTF-8}"
 
 # === Editor ===
 export EDITOR="vim"
@@ -34,4 +34,3 @@ fpath=(
   $ZSH_HOME/completions
   $fpath
 )
-

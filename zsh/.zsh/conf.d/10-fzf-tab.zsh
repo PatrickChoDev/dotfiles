@@ -1,5 +1,7 @@
 # === fzf-tab (must come AFTER compinit) ===
-source "$ZSH_HOME/plugins/fzf-tab/fzf-tab.plugin.zsh"
+if (( $+commands[fzf] )) && [[ -r "$ZSH_HOME/plugins/fzf-tab/fzf-tab.plugin.zsh" ]]; then
+  source "$ZSH_HOME/plugins/fzf-tab/fzf-tab.plugin.zsh"
+fi
 
 # === Completion Appearance ===
 zstyle ':completion:*' group-name ''

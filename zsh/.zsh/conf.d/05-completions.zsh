@@ -1,5 +1,6 @@
 # === Completion Definitions ===
-source "$ZSH_HOME/plugins/zsh-completions/zsh-completions.plugin.zsh"
+[[ -r "$ZSH_HOME/plugins/zsh-completions/zsh-completions.plugin.zsh" ]] && \
+  source "$ZSH_HOME/plugins/zsh-completions/zsh-completions.plugin.zsh"
 
 zstyle ':completion::complete:*' use-cache on
 zstyle ':completion::complete:*' cache-path "$ZSH_HOME/.zcompcache"
@@ -39,4 +40,3 @@ fi
 
 zstyle ':completion:*:descriptions' format '[%d]'
 zstyle ':completion:*' squeeze-slashes true
-

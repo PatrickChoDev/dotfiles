@@ -1,2 +1,1 @@
-(( IS_MACOS )) && alias nerdctl=nerdctl.lima
-
+(( IS_MACOS )) && (( $+commands[nerdctl.lima] )) && alias nerdctl=nerdctl.lima

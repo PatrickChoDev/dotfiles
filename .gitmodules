@@ -28,3 +28,6 @@
 [submodule "tmux/plugins/tmux-fzf-url"]
 	path = tmux/plugins/tmux-fzf-url
 	url = https://github.com/wfxr/tmux-fzf-url
+[submodule "zsh/.zsh/plugins/powerlevel10k"]
+	path = zsh/.zsh/plugins/powerlevel10k
+	url = https://github.com/romkatv/powerlevel10k.git

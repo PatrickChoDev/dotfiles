@@ -1,1 +1,2 @@
-source "$ZSH_HOME/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+[[ -r "$ZSH_HOME/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]] && \
+  source "$ZSH_HOME/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"

@@ -16,7 +16,7 @@ elixir = "latest"
 bun = "latest"
 mysql = "latest"
 aws-cli = { version = "latest", symlink_bins = "true" }
-claude = "latest"
+claude = { version = "latest", minimum_release_age = "4h" }
 mc = "latest"
 zig = "latest"
 

@@ -32,8 +32,9 @@ function set_win_title(){
     local full_path="$(pwd)"
     local dir=""
 
-    local git_root
-    git_root=$(git rev-parse --show-toplevel 2>/dev/null)
+    # 20-prompt.zsh populates this before the title hook runs. Avoid another
+    # Git subprocess on every prompt redraw.
+    local git_root="${PROMPT_GIT_ROOT:-}"
 
     if [[ -n "$git_root" ]]; then
         local repo_name=$(basename "$git_root")
@@ -63,6 +64,5 @@ function set_win_title(){
     echo -ne "\033]0; ${dir} \007"
 }
 
-precmd_functions+=(set_win_title)
-
-
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd set_win_title

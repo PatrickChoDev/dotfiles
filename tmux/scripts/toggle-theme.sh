@@ -18,18 +18,14 @@ fi
 
 # ── 2. Toggle macOS Dark Mode ────────────────────────────────────────────────
 # Ghostty (window-theme=system) will auto-switch its terminal palette,
-# which makes fzf-tab / lsd / starship follow for free.
+# which makes fzf-tab and lsd follow for free.
 osascript -e "tell application \"System Events\" to tell appearance preferences to set dark mode to $next_os_dark" 2>/dev/null
 
 # ── 3. Reload tmux ───────────────────────────────────────────────────────────
 tmux set -g @catppuccin_flavor "$next_flavor"
 tmux source-file ~/.tmux.conf
-# tmux.conf re-runs if-shell which reads macOS theme (now updated), so flavor
-# will be correct — but unset @thm_* vars so catppuccin -ogq flags don't block.
-for opt in $(tmux show-options -g | awk '/^@thm_/{print $1}'); do
-  tmux set -gqu "$opt"
-done
-tmux run-shell ~/.tmux/plugins/catppuccin/catppuccin.tmux
+tmux set -gu @catppuccin_flavor
+~/.tmux/scripts/sync-theme.sh
 
 # ── 4. Toggle claude-code theme ──────────────────────────────────────────────
 settings="$HOME/.claude/settings.json"

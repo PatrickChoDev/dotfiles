@@ -38,3 +38,5 @@ require 'plugins.winshift'
 require 'plugins.scope'
 require 'plugins.folding'
 require 'plugins.ide' -- trouble, fidget, illuminate, which-key
+
+pcall(dofile, vim.fn.stdpath 'config' .. '/local.lua')

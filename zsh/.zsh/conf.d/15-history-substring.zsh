@@ -2,11 +2,6 @@ HISTORY_SUBSTRING_SEARCH_PREFIXED=1
 
 source "$ZSH_HOME/plugins/zsh-history-substring-search/zsh-history-substring-search.plugin.zsh"
 
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
-
-bindkey '^R' fzf-history-widget
-
 fzf-history-widget() {
   local query="${BUFFER}"
   fc -R
@@ -29,5 +24,15 @@ fzf-history-widget() {
   fi
   zle reset-prompt
 }
-zle -N fzf-history-widget
 
+for keymap in emacs viins vicmd; do
+  bindkey -M "$keymap" '^[[A' history-substring-search-up
+  bindkey -M "$keymap" '^[[B' history-substring-search-down
+done
+
+if (( $+commands[fzf] )); then
+  zle -N fzf-history-widget
+  for keymap in emacs viins vicmd; do
+    bindkey -M "$keymap" '^R' fzf-history-widget
+  done
+fi

@@ -35,6 +35,10 @@ nvim/plugin/
 # Local customizations (optional)
 local/
 *.local
+zsh/.zsh/local/
+nvim/local.lua
+tmux/local.conf
+ghostty/local
 
 # Compiled files
 *.pyc
