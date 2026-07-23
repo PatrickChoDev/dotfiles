@@ -42,9 +42,9 @@ require('illuminate').configure {
   filetypes_denylist = { 'neo-tree', 'TelescopePrompt', 'alpha', 'mason', 'help' },
 }
 
--- Navigate between references with ]] / [[
-vim.keymap.set('n', ']]', function() require('illuminate').goto_next_reference() end, { desc = 'Next reference' })
-vim.keymap.set('n', '[[', function() require('illuminate').goto_prev_reference() end, { desc = 'Prev reference' })
+-- Navigate between references (avoid stomping on ]] / [[ section-nav)
+vim.keymap.set('n', '<leader>]', function() require('illuminate').goto_next_reference() end, { desc = 'Next reference' })
+vim.keymap.set('n', '<leader>[', function() require('illuminate').goto_prev_reference() end, { desc = 'Prev reference' })
 
 -- ── which-key: keybind hint popups ──────────────────────────────────────────
 require('which-key').setup {

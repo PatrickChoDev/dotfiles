@@ -30,8 +30,9 @@ vim.pack.add({
   gh 'MunifTanjim/nui.nvim',
   gh 'nvim-lua/plenary.nvim',
 
-  -- Notifications
+  -- Notifications & UI
   gh 'rcarriga/nvim-notify',
+  gh 'folke/noice.nvim',
 
   -- File explorer
   { src = gh 'nvim-neo-tree/neo-tree.nvim', version = 'v3.x' },

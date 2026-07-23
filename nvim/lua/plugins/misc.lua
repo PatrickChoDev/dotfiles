@@ -16,7 +16,7 @@ require('todo-comments').setup { signs = false }
 -- zen-mode
 require('zen-mode').setup {
   window = {
-    backdrop = 1,
+    backdrop = 0.90,
     width = 0.7,
     height = 0.95,
     options = {

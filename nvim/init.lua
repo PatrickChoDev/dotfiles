@@ -6,11 +6,15 @@ require('core.title').setup() -- Keep window title in sync with project root
 require('core.terminal').setup() -- Terminal helpers
 -- require('core.scroll').setup() -- Dynamic scroll offsets
 
+-- vim-visual-multi globals must be set before the plugin loads
+require 'plugins.multi-cursor-globals'
+
 -- Install and load all plugins via vim.pack (Neovim 0.12 built-in)
 require 'pack'
 
 -- Configure plugins in dependency order
 require 'plugins.colortheme' -- theme must come first
+require 'plugins.noice' -- must come before notify — takes over cmdline/notify UI
 require 'plugins.notify' -- notifications early so other plugins can use them
 require 'plugins.treesitter'
 require 'plugins.telescope'
