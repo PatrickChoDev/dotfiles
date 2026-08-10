@@ -28,7 +28,7 @@ function M.setup()
   -- Clear search highlighting with Esc
   vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', opts)
 
-  -- Resize with Ctrl+Shift+arrows (holdable) — Option/Ctrl+arrow alone are word-jump.
+  -- Resize (holdable)
   vim.keymap.set('n', '<C-S-Up>', ':resize -2<CR>', opts)
   vim.keymap.set('n', '<C-S-Down>', ':resize +2<CR>', opts)
   vim.keymap.set('n', '<C-S-Left>', ':vertical resize -2<CR>', opts)

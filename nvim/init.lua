@@ -22,6 +22,7 @@ require 'plugins.mason'
 require 'plugins.lsp'
 require 'plugins.autocompletion'
 require 'plugins.lualine'
+require 'plugins.image' -- before neotree so its filesystem preview picks it up
 require 'plugins.neotree'
 require 'plugins.debugger'
 require 'plugins.gitsigns'

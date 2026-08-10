@@ -23,7 +23,6 @@ local function buffers_in_other_windows(opts)
   return buffers
 end
 
--- Helper function to check if only neo-tree window remains
 function M.is_only_neotree_window()
   local windows = vim.api.nvim_list_wins()
   local editor_windows = 0
@@ -81,12 +80,10 @@ end
 function M.smart_close_buffer()
   local current_buf = vim.api.nvim_get_current_buf()
 
-  -- Check if buffer has unsaved changes
   if not M.prompt_save_changes(current_buf) then
     return
   end
 
-  -- Count total buffers
   local buffers = vim.fn.getbufinfo { buflisted = 1 }
   local total_buffers = #buffers
 

@@ -1,17 +1,13 @@
 let mapleader = ","
 
-" -----------------------------------------------------------------------------
 " General
-" -----------------------------------------------------------------------------
 set number
 set relativenumber
 filetype plugin indent on
 set autoread
 au FocusGained,BufEnter * silent! checktime
 
-" -----------------------------------------------------------------------------
 " UI
-" -----------------------------------------------------------------------------
 syntax enable
 if has('termguicolors')
   set termguicolors
@@ -28,9 +24,7 @@ set wildignore+=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store
 set backspace=eol,start,indent
 set mouse=a
 
-" -----------------------------------------------------------------------------
 " Indent
-" -----------------------------------------------------------------------------
 set expandtab
 set smarttab
 set shiftwidth=2
@@ -42,9 +36,7 @@ set wrap
 " Return to last edit position when reopening a file
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
-" -----------------------------------------------------------------------------
 " Window / tab keymaps (mirrors nvim/lua/core/keymaps/window.lua, tab.lua)
-" -----------------------------------------------------------------------------
 map <leader>wv <C-w>v
 map <leader>wh <C-w>s
 map <leader>wc :close<cr>
@@ -63,9 +55,6 @@ map <leader>t[ :tabprevious<cr>
 map ]t :tabnext<cr>
 map [t :tabprevious<cr>
 
-" -----------------------------------------------------------------------------
-" Misc
-" -----------------------------------------------------------------------------
 map <silent> <leader><cr> :noh<cr>
 
 " Don't close window when deleting a buffer

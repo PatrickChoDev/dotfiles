@@ -54,7 +54,6 @@ local function reopen_neotree(position)
   end
 end
 
--- Helper function to check if window is neo-tree
 function M.is_neotree_window(winnr)
   winnr = winnr or vim.api.nvim_get_current_win()
   local bufnr = vim.api.nvim_win_get_buf(winnr)
@@ -62,7 +61,6 @@ function M.is_neotree_window(winnr)
   return filetype == 'neo-tree' or filetype == 'neo-tree-popup'
 end
 
--- Get all regular windows (exclude neo-tree windows)
 function M.get_regular_windows()
   local regular_windows = {}
   local windows = vim.api.nvim_list_wins()
@@ -104,12 +102,10 @@ function M.smart_close_window()
   local buffer_utils = require 'core.utils.buffer'
   local current_buf = vim.api.nvim_get_current_buf()
 
-  -- Check if buffer has unsaved changes
   if not buffer_utils.prompt_save_changes(current_buf) then
     return
   end
 
-  -- Count total buffers
   local buffers = vim.fn.getbufinfo { buflisted = 1 }
   local total_buffers = #buffers
 
@@ -176,7 +172,6 @@ function M.rotate_windows(direction)
     return
   end
 
-  -- Get all regular windows (exclude neo-tree windows)
   local regular_windows = M.get_regular_windows()
 
   -- Need at least 2 regular windows to rotate
@@ -193,7 +188,6 @@ function M.rotate_windows(direction)
     window_info[i] = { bufnr = bufnr, cursor = cursor }
   end
 
-  -- Rotate the buffer assignments
   if direction == 'clockwise' then
     -- Move each buffer to the next window (last buffer goes to first window)
     local last_info = window_info[#window_info]
@@ -245,7 +239,6 @@ function M.smart_swap_window()
   local next_idx = (current_idx % #windows) + 1
   local next_win = windows[next_idx]
 
-  -- Check if next window is neo-tree
   if M.is_neotree_window(next_win) then
     vim.notify('Cannot swap with neo-tree window', vim.log.levels.WARN)
     return

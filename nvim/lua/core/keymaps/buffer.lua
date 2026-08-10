@@ -31,7 +31,7 @@ function M.setup()
 
   -- Buffer operations
   vim.keymap.set('n', '<leader>x', buffer_utils.smart_close_buffer, { noremap = true, silent = true, desc = 'Close buffer' })
-  vim.keymap.set('n', '<leader>bx', buffer_utils.smart_close_buffer, { noremap = true, silent = true, desc = '[B]uffer [X] (close)' })
+  vim.keymap.set('n', '<leader>bc', buffer_utils.smart_close_buffer, { noremap = true, silent = true, desc = '[B]uffer [C]lose' })
   vim.keymap.set('n', '<leader>bN', '<cmd>enew<CR>', { noremap = true, silent = true, desc = '[B]uffer [N]ew' })
   vim.keymap.set('n', '<leader>bca', buffer_utils.close_all_buffers, { noremap = true, silent = true, desc = '[B]uffer [C]lose [A]ll' })
   vim.keymap.set('n', '<leader>bco', buffer_utils.close_other_buffers, { noremap = true, silent = true, desc = '[B]uffer [C]lose [O]thers' })

@@ -169,16 +169,9 @@ vim.api.nvim_create_autocmd('User', {
   end,
 })
 
--- Elixir tools
+-- Elixir tools (elixirls dropped: its self-compiling installer repopped an output panel every launch)
 require('elixir').setup {
   nextls = { enable = true },
-  elixirls = {
-    enable = true,
-    settings = require('elixir.elixirls').settings {
-      dialyzerEnabled = true,
-      enableTestLenses = true,
-    },
-  },
   projectionist = { enable = true },
 }
 

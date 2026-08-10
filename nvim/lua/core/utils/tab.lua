@@ -2,9 +2,7 @@
 
 local M = {}
 
--- Function to move current buffer from tab back to a window
 function M.move_tab_to_window()
-  -- Check if we're in a tab (not the first tab)
   local current_tab = vim.fn.tabpagenr()
   local total_tabs = vim.fn.tabpagenr('$')
 
@@ -13,7 +11,6 @@ function M.move_tab_to_window()
     return
   end
 
-  -- Get current buffer
   local current_buf = vim.api.nvim_get_current_buf()
 
   -- Close current tab
@@ -24,7 +21,6 @@ function M.move_tab_to_window()
   vim.api.nvim_set_current_buf(current_buf)
 end
 
--- Function to move tab to specific tab number
 function M.move_tab_to_tab_number()
   local total_tabs = vim.fn.tabpagenr('$')
 
@@ -48,7 +44,6 @@ function M.move_tab_to_tab_number()
     return
   end
 
-  -- Get current buffer
   local current_buf = vim.api.nvim_get_current_buf()
 
   -- Close current tab
