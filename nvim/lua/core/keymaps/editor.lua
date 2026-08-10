@@ -28,11 +28,11 @@ function M.setup()
   -- Clear search highlighting with Esc
   vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>', opts)
 
-  -- Resize with arrows
-  vim.keymap.set('n', '<Up>', ':resize -2<CR>', opts)
-  vim.keymap.set('n', '<Down>', ':resize +2<CR>', opts)
-  vim.keymap.set('n', '<Left>', ':vertical resize -2<CR>', opts)
-  vim.keymap.set('n', '<Right>', ':vertical resize +2<CR>', opts)
+  -- Resize with Ctrl+Shift+arrows (holdable) — Option/Ctrl+arrow alone are word-jump.
+  vim.keymap.set('n', '<C-S-Up>', ':resize -2<CR>', opts)
+  vim.keymap.set('n', '<C-S-Down>', ':resize +2<CR>', opts)
+  vim.keymap.set('n', '<C-S-Left>', ':vertical resize -2<CR>', opts)
+  vim.keymap.set('n', '<C-S-Right>', ':vertical resize +2<CR>', opts)
 
   -- Toggle line wrapping
   vim.keymap.set('n', '<leader>Tw', '<cmd>set wrap!<CR>', { noremap = true, silent = true, desc = '[T]oggle [W]rap' })

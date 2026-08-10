@@ -7,7 +7,7 @@ require('core.terminal').setup() -- Terminal helpers
 -- require('core.scroll').setup() -- Dynamic scroll offsets
 
 -- vim-visual-multi globals must be set before the plugin loads
-require 'plugins.multi-cursor-globals'
+require 'plugins.multi-cursor'
 
 -- Install and load all plugins via vim.pack (Neovim 0.12 built-in)
 require 'pack'
@@ -30,8 +30,8 @@ require 'plugins.alpha'
 require 'plugins.indent-blankline'
 require 'plugins.misc'
 require 'plugins.comment'
+require 'plugins.hbac'
 require 'plugins.resession'
-require 'plugins.multi-cursor'
 require 'plugins.conform'
 require 'plugins.nvim-lint'
 require 'plugins.winshift'

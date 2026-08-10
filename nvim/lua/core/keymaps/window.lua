@@ -78,7 +78,8 @@ function M.setup()
   end, { noremap = true, silent = true, desc = '[T]erminal [H]orizontal split (tmux pane or split)' })
 
   -- Terminal: open in new tmux window (falls back to vsplit)
-  vim.keymap.set('n', '<leader>tn', terminal_utils.open_terminal_window, { noremap = true, silent = true, desc = '[T]erminal [N]ew window (tmux window or vsplit)' })
+  -- (was <leader>tn, but that's shadowed by core.keymaps.tab's :tabnew — tab.lua loads after this module)
+  vim.keymap.set('n', '<leader>tw', terminal_utils.open_terminal_window, { noremap = true, silent = true, desc = '[T]erminal [W]indow (tmux window or vsplit)' })
 
   -- Terminal: toggle floating popup (tmux) or hsplit (built-in)
   vim.keymap.set('n', '<leader>tt', function()

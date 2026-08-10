@@ -17,16 +17,25 @@ bindkey -M viins '^[[1;3C' forward-word      # option+right
 bindkey -M viins '^[b' backward-word         # fallback: alt-as-meta
 bindkey -M viins '^[f' forward-word          # fallback: alt-as-meta
 
-# Switch the terminal cursor shape with vi mode so it's visible alongside p10k's prompt char.
-function zle-keymap-select {
-  case $KEYMAP in
-    vicmd) print -n '\e[1 q' ;;   # block cursor = normal mode
-    *)     print -n '\e[5 q' ;;   # beam cursor = insert mode
-  esac
-}
+# Cursor is always block; mode is conveyed by p10k's prompt char color instead.
+function zle-keymap-select { print -n '\e[1 q' }
 zle -N zle-keymap-select
 
-function zle-line-init {
-  print -n '\e[5 q'
-}
+function zle-line-init { print -n '\e[1 q' }
 zle -N zle-line-init
+
+# Toggle vi-mode on/off entirely (Ctrl+G, also reachable as Cmd+G via Ghostty).
+function toggle-vi-mode {
+  if [[ -o vi ]]; then
+    bindkey -e
+    zle -K emacs
+  else
+    bindkey -v
+    zle -K viins
+  fi
+  zle -R
+}
+zle -N toggle-vi-mode
+bindkey -M viins '^G' toggle-vi-mode
+bindkey -M vicmd '^G' toggle-vi-mode
+bindkey -M emacs '^G' toggle-vi-mode

@@ -23,12 +23,8 @@ notify.setup {
 -- Route all vim.notify calls through nvim-notify
 vim.notify = notify
 
--- Telescope integration: browse notification history with <leader>nh
+-- Telescope integration (notification history browsing is bound in plugins.noice: <leader>nh/nd/nl)
 pcall(require('telescope').load_extension, 'notify')
---vim.keymap.set('n', '<leader>nh', '<cmd>Telescope notify<cr>', { desc = 'Notification history' })
---vim.keymap.set('n', '<leader>nd', function()
---  notify.dismiss { silent = true, pending = true }
---end, { desc = 'Dismiss notifications' })
 
 -- Scroll LSP hover/signature floats with C-f/C-b (native float scroll)
 vim.keymap.set({ 'n' }, '<C-f>', function()

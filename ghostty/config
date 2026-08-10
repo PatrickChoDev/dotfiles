@@ -2,7 +2,6 @@ quit-after-last-window-closed = true
 shell-integration = zsh
 shell-integration-features = no-cursor,sudo,title
 quick-terminal-screen = mouse
-custom-shader-animation = true
 copy-on-select = false
 window-colorspace = display-p3
 window-theme = system
@@ -22,4 +21,13 @@ macos-option-as-alt = true
 macos-titlebar-style = tabs
 auto-update = download
 auto-update-channel = stable
+keybind = cmd+alt+h=goto_split:left
+keybind = cmd+alt+j=goto_split:down
+keybind = cmd+alt+k=goto_split:up
+keybind = cmd+alt+l=goto_split:right
+keybind = cmd+alt+p=goto_split:previous
+keybind = cmd+alt+n=goto_split:next
+keybind = cmd+r=prompt_tab_title
+keybind = cmd+g=text:\x07
+
 config-file = ?local
