@@ -18,7 +18,6 @@ cursor-opacity = 0.5
 mouse-shift-capture = true
 focus-follows-mouse = false
 macos-option-as-alt = true
-macos-titlebar-style = tabs
 auto-update = download
 auto-update-channel = stable
 keybind = cmd+alt+h=goto_split:left

@@ -28,6 +28,29 @@ require('window-picker').setup {
   },
 }
 
+local PREVIEW_SKIP_EXTENSIONS = { zip = true, tar = true, gz = true, rar = true, ['7z'] = true, xz = true, bz2 = true }
+local PREVIEW_IMAGE_EXTENSIONS = { png = true, jpg = true, jpeg = true, gif = true, webp = true, avif = true, bmp = true, svg = true }
+local PREVIEW_MAX_BYTES = 10 * 1024 * 1024 -- 10MB
+
+local function safe_toggle_preview(state)
+  local node = state.tree:get_node()
+  if node and node.type == 'file' then
+    local ext = (node.name:match '%.([^.]+)$' or ''):lower()
+    if PREVIEW_SKIP_EXTENSIONS[ext] then
+      vim.notify('Preview skipped: .' .. ext .. ' files are not previewed', vim.log.levels.INFO)
+      return
+    end
+    if not PREVIEW_IMAGE_EXTENSIONS[ext] then
+      local stat = vim.uv.fs_stat(node.path)
+      if stat and stat.size > PREVIEW_MAX_BYTES then
+        vim.notify(string.format('Preview skipped: file too large (%.1fMB)', stat.size / 1024 / 1024), vim.log.levels.INFO)
+        return
+      end
+    end
+  end
+  require('neo-tree.sources.filesystem.commands').toggle_preview(state)
+end
+
 require('neo-tree').setup {
   popup_border_style = 'single',
   enable_git_status = true,
@@ -87,7 +110,7 @@ require('neo-tree').setup {
       ['<2-LeftMouse>'] = 'open',
       ['<cr>'] = 'open',
       ['<esc>'] = 'cancel',
-      ['P'] = { 'toggle_preview', config = { use_float = true } },
+      ['P'] = { safe_toggle_preview, config = { use_float = true } },
       ['l'] = 'open',
       ['S'] = 'open_split',
       ['s'] = 'open_vsplit',
