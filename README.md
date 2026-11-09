@@ -1,12 +1,12 @@
 # Dotfiles
 
-Personal configuration files for vim, neovim, ghostty, and zsh.
+Personal configuration files for vim, neovim, ghostty, rex, and zsh.
 
 ## Quick Start
 
 ```bash
 # Clone with submodules
-git clone --recursive https://github.com/yourusername/dotfiles.git ~/dotfiles
+git clone --recursive https://github.com/PatrickChoDev/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 
 # List available programs and their status
@@ -19,6 +19,7 @@ cd ~/dotfiles
 ./install.sh vim
 ./install.sh nvim
 ./install.sh ghostty
+./install.sh rex
 ./install.sh zsh
 ```
 
@@ -54,6 +55,7 @@ Supported local hooks:
 - `zsh/.zsh/local/env.zsh` or `zsh/.zsh/local/pre/*.zsh` for early env knobs
 - `zsh/.zsh/local/*.zsh` for machine-local zsh settings
 - `nvim/local.lua` for machine-local Neovim settings
+- `mise/local.toml` (linked to `~/.config/mise/config.local.toml`) for machine-local mise tools; add with `mise use --path ~/.config/mise/config.local.toml <tool>`
 - `tmux/local.conf` or `~/.tmux/local.conf` for machine-local tmux settings
 - `ghostty/local` or `~/.config/ghostty/local` for machine-local Ghostty settings
 

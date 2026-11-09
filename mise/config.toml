@@ -1,27 +1,14 @@
 [tools]
-deno = "latest"
-erlang = "latest"
-gleam = "latest"
-go = "latest"
-java = "latest"
-minikube = "latest"
-node = "lts"
-protobuf = "latest"
-python = "3.14"
-ruby = "latest"
-typst = "latest"
-uv = "latest"
-elixir = "latest"
 bun = "latest"
-mysql = "latest"
-aws-cli = { version = "latest", symlink_bins = "true" }
-claude = { version = "latest", minimum_release_age = "4h" }
-mc = "latest"
-zig = "latest"
-kind = "latest"
-helm = "latest"
+codegraph = "latest"
+deno = "latest"
+gh = "latest"
+go = "latest"
+node = "lts"
+pnpm = "latest"
+python = "3.14"
+uv = "latest"
 
 [settings]
 idiomatic_version_file = true
 experimental = true
-

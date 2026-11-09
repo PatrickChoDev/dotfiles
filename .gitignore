@@ -39,6 +39,7 @@ zsh/.zsh/local/
 nvim/local.lua
 tmux/local.conf
 ghostty/local
+mise/local.toml
 
 # Compiled files
 *.pyc
