@@ -1,5 +1,3 @@
-local util = require 'lspconfig.util'
-
 local icons = {
   [vim.diagnostic.severity.ERROR] = '',
   [vim.diagnostic.severity.WARN] = '',
@@ -58,7 +56,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
     map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
     map('<leader>cp', function()
       -- Peek definition: open definition in a floating preview
-      local params = vim.lsp.util.make_position_params()
+      local params = vim.lsp.util.make_position_params(0, 'utf-16')
       vim.lsp.buf_request(event.buf, 'textDocument/definition', params, function(_, result)
         if not result or vim.tbl_isempty(result) then return end
         local loc = vim.islist(result) and result[1] or result

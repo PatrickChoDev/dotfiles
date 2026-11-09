@@ -250,8 +250,8 @@ local function prepare_terminal_buffer(bufnr)
     return
   end
 
-  vim.api.nvim_buf_set_option(bufnr, 'buflisted', false)
-  vim.api.nvim_buf_set_option(bufnr, 'filetype', 'terminal')
+  vim.bo[bufnr].buflisted = false
+  vim.bo[bufnr].filetype = 'terminal'
 
   local root = get_terminal_root()
   if root and root ~= '' then

@@ -33,7 +33,7 @@ local date_section = {
 }
 
 -- Update date every second, but only while alpha is the active buffer
-local timer = vim.loop.new_timer()
+local timer = vim.uv.new_timer()
 local function update_date()
   local buf = vim.api.nvim_get_current_buf()
   if vim.bo[buf].filetype ~= 'alpha' then
