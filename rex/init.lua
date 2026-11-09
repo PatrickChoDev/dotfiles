@@ -1,0 +1,16 @@
+-- tmux (prefix ctrl+space)
+rex.bind("ctrl+space>r", "client.config.reload")
+rex.bind("ctrl+space>ctrl+space", "pane.send_key", { key = "ctrl+space" })
+rex.bind("ctrl+space>ctrl+p", "client.tab.previous")
+rex.bind("ctrl+space>ctrl+n", "client.tab.next")
+rex.bind("ctrl+space>shift+5", "pane.split", { direction = "right" })
+rex.bind("ctrl+space>shift+'", "pane.split", { direction = "down" })
+rex.bind("ctrl+space>,", "client.tab.rename")
+
+-- Ghostty
+rex.bind("alt+cmd+h", "pane.focus", { direction = "left" })
+rex.bind("alt+cmd+j", "pane.focus", { direction = "down" })
+rex.bind("alt+cmd+k", "pane.focus", { direction = "up" })
+rex.bind("alt+cmd+l", "pane.focus", { direction = "right" })
+rex.bind("alt+cmd+p", "pane.focus_previous")
+rex.bind("alt+cmd+n", "pane.focus_next")
